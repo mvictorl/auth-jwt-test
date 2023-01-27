@@ -8,10 +8,11 @@
 2.  **express-validator**
 3.  **cors**
 4.  **jsonwebtoken**
-5.  **bcryptjs**
-6.  **dotenv**
-7.  **nodemon** (Dev)
-8.  **prisma** (Dev)
+5.  **cookie-parser**
+6.  **bcryptjs**
+7.  **dotenv**
+8.  **nodemon** (Dev)
+9.  **prisma** (Dev)
 
     1. `npm i prisma -D`
     2. `npx prisma init` (`set NODE_TLS_REJECT_UNAUTHORIZED=0` for resolve "unable to verify the first certificate" error)
@@ -24,7 +25,7 @@
     4. Add models to the `prisma/schema.prisma` file
     5. `npx prisma migrate dev --name init`
        > _Note:_ `generate` is called under the hood by default, after running `prisma migrate dev`. If the `prisma-client-js` generator is defined in your schema, this will check if `@prisma/client` is installed and install it if it's missing
-    6. Whenever you make changes to your Prisma schema in the future, you manually need to invoke `prisma generate` in order to accommodate the changes in your Prisma Client API
+    6. Whenever you make changes to your Prisma schema in the future, you manually need to invoke `npx prisma generate` in order to accommodate the changes in your Prisma Client API
     7. To add the mock data
        1. Create `seed.js` file
        2. Add to `package.json`
@@ -36,7 +37,7 @@
        3. `npx prisma db seed`
           > Maybe need add `"type": "module"` in the `pakage.json` file for use import into `seed.js` file
 
-9.
+10.
 
 ### 2. Backend
 
