@@ -7,5 +7,5 @@ module.exports = (err, req, res, next) => {
 			errors: err.errors,
 		})
 	}
-	return res.status(500).json({ message: 'Unexpected error' })
+	return res.status(500).json({ message: 'Unexpected error', err })
 }

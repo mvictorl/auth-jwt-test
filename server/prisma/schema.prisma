@@ -20,7 +20,7 @@ model User {
   token          Token?
   isActivated    Boolean @default(false)
   activationLink String?
-  roles          Role[]
+  roles          Role[] @default([USER])
 }
 
 model Token {

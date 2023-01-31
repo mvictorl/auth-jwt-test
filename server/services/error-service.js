@@ -44,6 +44,10 @@ module.exports = class ApiError extends Error {
 		return new ApiError(401, 'User has no permissions')
 	}
 
+	static ActivationError() {
+		return new ApiError(401, 'Activation error has occurred')
+	}
+
 	static ServerError(message, error = []) {
 		return new ApiError(500, message, error)
 	}
