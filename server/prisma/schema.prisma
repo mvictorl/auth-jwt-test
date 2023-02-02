@@ -11,16 +11,17 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(uuid())
-  name           String  @unique
-  email          String  @unique
+  id             String       @id @default(uuid())
+  name           String       @unique
+  email          String       @unique
   password       String
   firstName      String?
   lastName       String?
   token          Token?
-  isActivated    Boolean @default(false)
+  isActivated    Boolean      @default(false)
   activationLink String?
-  roles          Role[] @default([USER])
+  roles          Role[]       @default([USER])
+  NewPassword    NewPassword?
 }
 
 model Token {
@@ -28,6 +29,14 @@ model Token {
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  String @unique
   refresh String
+}
+
+model NewPassword {
+  id          String @id @default(uuid())
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String @unique
+  newPassword String
+  restoreLink String @unique
 }
 
 enum Role {

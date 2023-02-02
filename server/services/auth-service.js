@@ -152,8 +152,6 @@ class AuthService {
 		}
 	}
 
-	async check(refreshToken) {}
-
 	async activation(activationCode, refreshToken) {
 		const userData = await tokenSrv.validateRefreshToken(refreshToken)
 		if (!userData) {
@@ -269,6 +267,158 @@ class AuthService {
 			throw ApiError.ServerError('DB Error', e)
 		}
 	}
+
+	async paswordRestoreLinkGeneration(email, password) {
+		try {
+			return await dbClient.user
+				.findUnique({
+					where: { email },
+					select: { id: true },
+				})
+				.then(
+					async user => {
+						const hashedPassword = await bcrypt.hash(password, 12)
+						const link = uuid.v4()
+
+						return await dbClient.newPassword
+							.upsert({
+								where: { userId: user.id },
+								update: {
+									newPassword: hashedPassword,
+									restoreLink: link,
+								},
+								create: {
+									userId: user.id,
+									newPassword: hashedPassword,
+									restoreLink: link,
+								},
+								select: {
+									restoreLink: true,
+								},
+							})
+							.then(data => data.restoreLink)
+					},
+					err => {
+						throw ApiError.ValidationError('Password recovery error', {
+							msg: 'Email user not registered',
+							param: 'email',
+							value: email,
+							location: 'body',
+						})
+					}
+				)
+		} catch (e) {
+			if (e.status === 422) {
+				throw ApiError.ValidationError('Password recovery error', e.errors)
+			} else {
+				throw new apiError.ServerError('Signup server error', e)
+			}
+		}
+	}
+
+	async passwordRestoreLinkCheck(restoreLink) {
+		try {
+			return await dbClient.newPassword.findUnique({
+				where: { restoreLink },
+				select: { userId: true }
+					user: {,
+				},
+			})
+		} catch (e) {}
+	}
+
+	// ToDo: DRAFT
+	async passwordUpdate(email, password) {
+		try {
+			const hashedPassword = await bcrypt.hash(password, 12)
+
+			return await dbClient.user
+				.update({
+					where: { email },
+					data: { password: hashedPassword },
+					select: {
+						id: true,
+						name: true,
+						firstName: true,
+						lastName: true,
+						roles: true,
+						isActivated: true,
+					},
+				})
+				.then(
+					user => {
+						const errors = []
+						if (user.name === username)
+							errors.push({
+								msg: `User ${username} already exist`,
+								param: 'username',
+								value: username,
+								location: 'body',
+							})
+						if (user.email === email)
+							errors.push({
+								msg: `E-mail ${email} already registered`,
+								param: 'email',
+								value: email,
+								location: 'body',
+							})
+						throw ApiError.ValidationError(
+							`User ${username} already exist`,
+							errors
+						)
+					},
+					async err => {
+						const hashedPassword = await bcrypt.hash(password, 12)
+						const activationLink = uuid.v4()
+
+						const newUser = await dbClient.user.create({
+							data: {
+								name: username,
+								email,
+								password: hashedPassword,
+								firstName,
+								lastName,
+								activationLink,
+							},
+							select: {
+								id: true,
+								name: true,
+								firstName: true,
+								lastName: true,
+								roles: true,
+								isActivated: true,
+							},
+						})
+
+						const userDto = new TokenUserDTO(newUser)
+
+						const tokens = await tokenSrv.generatePairOfTokens({ ...userDto })
+						const savedToken = await tokenSrv.saveRefreshToken(
+							userDto.id,
+							tokens.refreshToken
+						)
+						if (!savedToken) {
+							await dbClient.user.delete({
+								where: { id: userDto.id },
+							})
+							throw new apiError.ServerError('Signup server error')
+						}
+						return { tokens, user: newUser }
+					}
+				)
+		} catch (e) {
+			if (e.status === 422) {
+				throw ApiError.ValidationError(
+					`User ${username} already exist`,
+					e.errors
+				)
+			} else {
+				throw new apiError.ServerError('Signup server error', e)
+			}
+		}
+	}
+
+	async check(refreshToken) {}
 }
 
 module.exports = authSrv = new AuthService()

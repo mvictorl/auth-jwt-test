@@ -84,6 +84,31 @@ router.patch(
 	authCtrl.activation
 )
 
+router.post(
+	'/auth/restore',
+	body('email').isEmail().withMessage('Incorrect email address'),
+	body('password')
+		.isLength({
+			min: process.env.PASSWORD_MIN_LENGTH,
+			max: process.env.PASSWORD_MAX_LENGTH,
+		})
+		.withMessage(
+			`Password mast be from ${process.env.PASSWORD_MIN_LENGTH} to ${process.env.PASSWORD_MAX_LENGTH} characrets`
+		)
+		.bail()
+		.custom(async (value, { req }) => {
+			if (value != req.body.passwordConfirm) {
+				throw new Error('Password confirmation is incorrect')
+			}
+		}),
+	authCtrl.passwordRestoreRequest
+)
+router.patch(
+	'/auth/restore/:code',
+	param('code').isUUID().withMessage('Incorrect the Restore password link'),
+	authCtrl.passwordRestoreLinkCheck
+)
+
 router.get('/auth/refresh', authCtrl.refresh)
 
 module.exports = router

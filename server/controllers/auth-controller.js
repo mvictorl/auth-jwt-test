@@ -72,6 +72,26 @@ class AuthContriller {
 		}
 	}
 
+	async refresh(req, res, next) {
+		try {
+			const { refreshToken } = req.cookies
+
+			if (refreshToken) {
+				const userData = await authSrv.refresh(refreshToken)
+				res.cookie('refreshToken', userData.tokens.refreshToken, {
+					httpOnly: true,
+					maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days as refresh token
+				})
+
+				return res.json(new ResponseUserDTO(userData))
+			} else {
+				throw ApiError.UnauthorizedUserError()
+			}
+		} catch (e) {
+			next(e)
+		}
+	}
+
 	async activation(req, res, next) {
 		try {
 			const validationErrors = validationResult(req)
@@ -98,23 +118,43 @@ class AuthContriller {
 		}
 	}
 
-	async refresh(req, res, next) {
+	async passwordRestoreRequest(req, res, next) {
 		try {
-			const { refreshToken } = req.cookies
-
-			if (refreshToken) {
-				const userData = await authSrv.refresh(refreshToken)
-				res.cookie('refreshToken', userData.tokens.refreshToken, {
-					httpOnly: true,
-					maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days as refresh token
-				})
-
-				return res.json(new ResponseUserDTO(userData))
-			} else {
-				throw ApiError.UnauthorizedUserError()
+			const validationErrors = validationResult(req)
+			if (!validationErrors.isEmpty()) {
+				return next(
+					ApiError.ValidationError('Validation error', validationErrors.array())
+				)
 			}
+
+			const { email, password } = req.body
+			const result = await authSrv.paswordRestoreLinkGeneration(email, password)
+
+			console.log('Result:', result)
+			// ToDo: Send result (restoreLink) to e-mail:
+			//  http://localhost:5000/restore/[restoreLink]
+			//  ==>>
+			// api/auth/restore/[restoreLink]
+
+			return res.json({ message: 'Ok!' })
 		} catch (e) {
-			next()
+			next(e)
+		}
+	}
+
+	async passwordRestoreLinkCheck(req, res, next) {
+		try {
+			const validationErrors = validationResult(req)
+			if (!validationErrors.isEmpty()) {
+				return next(
+					ApiError.ValidationError('Validation error', validationErrors.array())
+				)
+			}
+
+			const result = await authSrv.passwordRestoreLinkCheck(req.params.code)
+			return res.json({ message: 'Password Restore Check' })
+		} catch (e) {
+			next(e)
 		}
 	}
 
@@ -122,7 +162,7 @@ class AuthContriller {
 		try {
 			return res.json({ message: 'Check' })
 		} catch (e) {
-			next()
+			next(e)
 		}
 	}
 }
