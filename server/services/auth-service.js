@@ -318,13 +318,37 @@ class AuthService {
 
 	async passwordRestoreLinkCheck(restoreLink) {
 		try {
-			return await dbClient.newPassword.findUnique({
-				where: { restoreLink },
-				select: { userId: true }
-					user: {,
-				},
-			})
-		} catch (e) {}
+			return await dbClient.newPassword
+				.findUnique({
+					where: { restoreLink },
+					select: {
+						userId: true,
+						newPassword: true,
+					},
+				})
+				.then(async data => {
+					await dbClient.newPassword.deleteMany({
+						where: { restoreLink },
+					})
+					return data
+				})
+				.then(async data => {
+					return await dbClient.user.update({
+						where: { id: data.userId },
+						data: { password: data.newPassword },
+						select: {
+							id: true,
+							name: true,
+							firstName: true,
+							lastName: true,
+							roles: true,
+							isActivated: true,
+						},
+					})
+				})
+		} catch (e) {
+			next(e)
+		}
 	}
 
 	// ToDo: DRAFT

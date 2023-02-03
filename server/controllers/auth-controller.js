@@ -150,9 +150,8 @@ class AuthContriller {
 					ApiError.ValidationError('Validation error', validationErrors.array())
 				)
 			}
-
 			const result = await authSrv.passwordRestoreLinkCheck(req.params.code)
-			return res.json({ message: 'Password Restore Check' })
+			return res.json(result)
 		} catch (e) {
 			next(e)
 		}
