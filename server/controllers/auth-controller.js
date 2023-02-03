@@ -151,7 +151,8 @@ class AuthContriller {
 				)
 			}
 			const result = await authSrv.passwordRestoreLinkCheck(req.params.code)
-			return res.json(result)
+			// return res.json(result)
+			return res.json({ message: 'Ok!' })
 		} catch (e) {
 			next(e)
 		}
