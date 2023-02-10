@@ -4,7 +4,6 @@ const uuid = require('uuid')
 const tokenSrv = require('./token-service')
 const ApiError = require('./error-service')
 const TokenUserDTO = require('../dtos/TokenUserDTO')
-const ResponseUserDTO = require('../dtos/ResponseUserDTO')
 
 class AuthService {
 	async signup(username, email, password, firstName = '', lastName = '') {
@@ -75,7 +74,7 @@ class AuthService {
 							await dbClient.user.delete({
 								where: { id: userDto.id },
 							})
-							throw new apiError.ServerError('Signup server error')
+							throw new ApiError.ServerError('Signup server error')
 						}
 						return { tokens, user: newUser }
 					}
@@ -138,8 +137,12 @@ class AuthService {
 					}
 				)
 		} catch (e) {
-			console.error('Signin server error', e)
-			throw new ApiError.ServerError('Signin server error', e)
+			if (e.status === 422) {
+				throw ApiError.ValidationError('Incorrect password', e.errors)
+			} else {
+				console.error('Signin server error', e)
+				throw new ApiError.ServerError('Signup server error', e)
+			}
 		}
 	}
 

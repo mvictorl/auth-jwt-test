@@ -39,28 +39,42 @@
 
 10.
 
-### 2. Backend
-
-1. Create `server.js` file
+11. Create `server.js` file
 
 ## Client side
 
 1. Pakages:
-   1. **React App** (Use Vite as CRA not supported tailwind viz. PosCSS)
-      1. `yarn create vite client --template react-ts` (to start dev-server: `yarn dev`)
-   2. **tailwind** (Dev)
-      1. `npm install -D tailwindcss postcss autoprefixer`
-      2. `npx tailwindcss init -p`
-      3. Add the paths to all of your template files in your `tailwind.config.cjs` file:
-         ```cjs
-         content: [
-            "./index.html",
-            "./src/**/*.{js,ts,jsx,tsx}",
-         ],
+
+   1. **vite** (for example, CRA not supported tailwind viz. PosCSS)
+      `yarn create vite client --template react-ts` (to start dev-server: `yarn dev`)
+   2. **axios**
+      `npm i axios`
+   3. **MUI**
+      1. `npm install @mui/material @emotion/react @emotion/styled`
+      2. `npm install @fontsource/roboto`
+      3. add to `main.tsx` file
+         ```ts
+         import '@fontsource/roboto/300.css'
+         import '@fontsource/roboto/400.css'
+         import '@fontsource/roboto/500.css'
+         import '@fontsource/roboto/700.css'
          ```
-      4. Add the @tailwind directives for each of Tailwind’s layers to your `./src/index.css` file:
-         ```css
-         @tailwind base;
-         @tailwind components;
-         @tailwind utilities;
-         ```
+      4. `npm install @mui/icons-material`
+   4. React Router DOM
+
+      `npm i react-router-dom` (v.6.x.x)
+
+   5. Redux Toolkit
+
+      `npm i react-redux @reduxjs/toolkit`
+
+   6.
+
+2. React Router DOM
+   1. `Router.tsx` describes route structure by `createBrowserRouter` function
+3. App's Store (Redux Toolkit)
+   1. `src/store/index.ts` - describes store (also type of store & type of dispatch)
+   2. `src/main.tsx` use `Provider` from 'react-redux' to provide store on the whole app
+   3. `src/store/slices/xxxSlice.ts` - "slice" of the store data
+4. Create the instance of axios for configure HTTP-request for adding authorization headers and for the refresh token mechanism (`src/axios/index.ts`)
+5.
