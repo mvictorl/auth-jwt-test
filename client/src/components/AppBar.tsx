@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link as LinkRRD } from 'react-router-dom'
+import { Link as LinkRRD, NavLink } from 'react-router-dom'
 import { AppBar as AppBarMUI } from '@mui/material'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
@@ -88,11 +88,42 @@ function AppBar() {
 								display: { xs: 'block', md: 'none' },
 							}}
 						>
-							{pages.map(page => (
+							<MenuItem onClick={handleCloseNavMenu}>
+								<Typography textAlign="center">products</Typography>
+							</MenuItem>
+							<MenuItem onClick={handleCloseNavMenu}>
+								<Typography
+									to="/signup"
+									component={NavLink}
+									textAlign="center"
+									sx={{
+										textAlign: 'center',
+										textDecoration: 'none',
+										color: 'inherit',
+									}}
+								>
+									signup
+								</Typography>
+							</MenuItem>
+							<MenuItem onClick={handleCloseNavMenu}>
+								<Typography
+									to="/signin"
+									component={NavLink}
+									textAlign="center"
+									sx={{
+										textAlign: 'center',
+										textDecoration: 'none',
+										color: 'inherit',
+									}}
+								>
+									signin
+								</Typography>
+							</MenuItem>
+							{/* {pages.map(page => (
 								<MenuItem key={page} onClick={handleCloseNavMenu}>
 									<Typography textAlign="center">{page}</Typography>
 								</MenuItem>
-							))}
+							))} */}
 						</Menu>
 					</Box>
 					<AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -115,7 +146,31 @@ function AppBar() {
 						LOGO
 					</Typography>
 					<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-						{pages.map(page => (
+						<Button
+							to="#"
+							component={NavLink}
+							onClick={handleCloseNavMenu}
+							sx={{ my: 2, color: 'white', display: 'block' }}
+						>
+							products
+						</Button>
+						<Button
+							to="/signup"
+							component={NavLink}
+							onClick={handleCloseNavMenu}
+							sx={{ my: 2, color: 'white', display: 'block' }}
+						>
+							signup
+						</Button>
+						<Button
+							to="/signin"
+							component={NavLink}
+							onClick={handleCloseNavMenu}
+							sx={{ my: 2, color: 'white', display: 'block' }}
+						>
+							signin
+						</Button>
+						{/* {pages.map(page => (
 							<Button
 								key={page}
 								onClick={handleCloseNavMenu}
@@ -123,7 +178,7 @@ function AppBar() {
 							>
 								{page}
 							</Button>
-						))}
+						))} */}
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>

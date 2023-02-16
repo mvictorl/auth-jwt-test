@@ -1,5 +1,6 @@
-import { useDispatch } from 'react-redux'
-import { Link as LinkRRD, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link as LinkRRD, useNavigate, useLocation } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -15,28 +16,60 @@ import Container from '@mui/material/Container'
 import Copyright from '../Copyright'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { AppDispatch } from '../../store'
-import { login } from '../../store/slices/authSlice'
+import { login } from '../../store/actions/authActions'
+import { selectIsAuth, selectErrors } from '../../store/slices/authSlice'
 
 const theme = createTheme()
 
 function SignIn() {
 	const dispatch: AppDispatch = useDispatch()
+	const isAuth = useSelector(selectIsAuth)
+	const errors = useSelector(selectErrors)
+
+	const { state, pathname } = useLocation()
 	const navigate = useNavigate()
+
+	const [username, setUsername] = useState<string>('')
+	const [usernameError, setUsernameError] = useState<string>(' ')
+	const [password, setPassword] = useState<string>('')
+	const [passwordError, setPasswordError] = useState<string>(' ')
+	const [remember, setRemember] = useState<boolean>(false)
+	// const [passwordShow, setPasswordShow] = useState<boolean>(false)
+
+	useEffect(() => {
+		if (isAuth) {
+			navigate(state?.from || '/')
+		}
+	}, [isAuth])
+
+	useEffect(() => {
+		if (errors.length > 0) {
+			errors.forEach(e => {
+				switch (e.param) {
+					case 'username':
+						setUsernameError(e.msg)
+						setUsername(e.value)
+						break
+					case 'password':
+						setPasswordError(e.msg)
+						setPassword(e.value)
+						break
+				}
+			})
+		}
+	}, [errors])
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		const data = new FormData(event.currentTarget)
-		const objData = {
-			username: data.get('username')!.toString(),
-			password: data.get('password')!.toString(),
-			remember: !!data.get('remember'),
-		}
-		console.log({
-			username: data.get('username'),
-			password: data.get('password'),
-		})
-		dispatch(login(objData))
-		// navigate('/')
+		dispatch(login({ username, password, remember }))
+		// const data = new FormData(event.currentTarget)
+		// const objData = {
+		// 	username: data.get('username')!.toString(),
+		// 	password: data.get('password')!.toString(),
+		// 	remember: !!data.get('remember'),
+		// }
+
+		// dispatch(login(objData))
 	}
 
 	return (
@@ -64,6 +97,9 @@ function SignIn() {
 						sx={{ mt: 1 }}
 					>
 						<TextField
+							onChange={e => setUsername(e.target.value)}
+							onFocus={() => setUsernameError(' ')}
+							value={username}
 							margin="normal"
 							required
 							fullWidth
@@ -71,9 +107,14 @@ function SignIn() {
 							label="User Name"
 							name="username"
 							autoComplete="username"
+							error={usernameError !== ' '}
+							helperText={usernameError || ' '}
 							autoFocus
 						/>
 						<TextField
+							onChange={e => setPassword(e.target.value)}
+							onFocus={() => setPasswordError(' ')}
+							value={password}
 							margin="normal"
 							required
 							fullWidth
@@ -82,10 +123,17 @@ function SignIn() {
 							type="password"
 							id="password"
 							autoComplete="current-password"
+							error={passwordError !== ' '}
+							helperText={passwordError || ' '}
 						/>
 						<FormControlLabel
 							control={
-								<Checkbox value="remember" name="remember" color="primary" />
+								<Checkbox
+									value={remember}
+									onChange={e => setRemember(!remember)}
+									name="remember"
+									color="primary"
+								/>
 							}
 							label="Remember me"
 						/>
@@ -99,12 +147,22 @@ function SignIn() {
 						</Button>
 						<Grid container>
 							<Grid item xs>
-								<Link to="/restore" variant="body2" component={LinkRRD}>
+								<Link
+									to="/restore"
+									state={{ from: pathname }}
+									component={LinkRRD}
+									variant="body2"
+								>
 									Forgot password?
 								</Link>
 							</Grid>
 							<Grid item>
-								<Link to="/signup" variant="body2" component={LinkRRD}>
+								<Link
+									to="/signup"
+									state={{ from: pathname }}
+									component={LinkRRD}
+									variant="body2"
+								>
 									{"Don't have an account? Sign Up"}
 								</Link>
 							</Grid>

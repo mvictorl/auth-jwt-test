@@ -23,7 +23,7 @@ async function register(
 async function login(
 	username: string,
 	password: string,
-	remember: boolean
+	remember: boolean = false
 ): Promise<IAuthResponse> {
 	const response = await $api.post('/auth/signin', {
 		username,
@@ -47,7 +47,7 @@ async function askRestore(
 	email: string,
 	password: string,
 	passwordConfirm: string
-): Promise<IAuthResponse> {
+): Promise<{ message: string }> {
 	const response = await $api.post('/auth/restore', {
 		email,
 		password,

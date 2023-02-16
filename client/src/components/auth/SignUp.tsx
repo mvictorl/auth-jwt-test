@@ -1,4 +1,5 @@
-import { Link as LinkRRD } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Link as LinkRRD, useLocation, useNavigate } from 'react-router-dom'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -11,17 +12,32 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from '../Copyright'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { AppDispatch } from '../../store'
+import { register } from '../../store/actions/authActions'
 
 const theme = createTheme()
 
 function SignUp() {
+	const dispatch: AppDispatch = useDispatch()
+
+	const { state, pathname } = useLocation() || { from: '/' }
+	const navigate = useNavigate()
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		const data = new FormData(event.currentTarget)
-		console.log({
-			email: data.get('email'),
-			password: data.get('password'),
-		})
+		const objData = {
+			username: data.get('username')!.toString(),
+			email: data.get('email')!.toString(),
+			firstName: data.get('firstName')?.toString() || '',
+			lastName: data.get('lastName')?.toString() || '',
+			password: data.get('password')!.toString(),
+			passwordConfirm: data.get('passwordConfirm')!.toString(),
+		}
+
+		dispatch(register(objData)).then(() =>
+			navigate(state?.from ? state.from : '/')
+		)
 	}
 
 	return (
@@ -121,7 +137,12 @@ function SignUp() {
 						</Button>
 						<Grid container justifyContent="flex-end">
 							<Grid item>
-								<Link to="/signin" variant="body2" component={LinkRRD}>
+								<Link
+									to="/signin"
+									state={{ from: pathname }}
+									component={LinkRRD}
+									variant="body2"
+								>
 									Already have an account? Sign in
 								</Link>
 							</Grid>

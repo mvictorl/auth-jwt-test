@@ -1,125 +1,93 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 import { IRootState } from '..'
 import { IUser } from '../../interfaces/IUser'
-import { AuthService } from '../../service/auth-service'
+import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
+import { login, logout, register } from '../actions/authActions'
 
 // Initial Auth State
 const initialState = {
+	isAuth: false,
 	currentUser: {} as IUser,
+	loading: false,
+	errors: [] as IValidationErrorResponse[],
+	success: false,
 }
-
-type registerProps = {
-	username: string
-	email: string
-	firstName: string
-	lastName: string
-	password: string
-	passwordConfirm: string
-}
-export const register = createAsyncThunk(
-	'auth/register',
-	async (
-		{
-			username,
-			email,
-			firstName,
-			lastName,
-			password,
-			passwordConfirm,
-		}: registerProps,
-		{ rejectWithValue }
-	) => {
-		try {
-			const data = await AuthService.register(
-				username,
-				email,
-				firstName,
-				lastName,
-				password,
-				passwordConfirm
-			)
-			if (!data.user || !data.accessToken) throw Error('Server error on Login')
-			else {
-				return { currentUser: data.user }
-			}
-		} catch (error: any) {
-			return rejectWithValue(error)
-		}
-	}
-)
-
-type loginProps = {
-	username: string
-	password: string
-	remember: boolean
-}
-export const login = createAsyncThunk(
-	'auth/login',
-	async ({ username, password, remember }: loginProps, { rejectWithValue }) => {
-		try {
-			const data = await AuthService.login(username, password, remember)
-
-			if (!data.user || !data.accessToken) throw Error('Server error on Login')
-
-			localStorage.setItem('bearer-token', data.accessToken)
-			return { currentUser: data.user }
-		} catch (error: any) {
-			return rejectWithValue(error)
-		}
-	}
-)
-
-export const logout = createAsyncThunk(
-	'auth/logout',
-	async ({}, { rejectWithValue }) => {
-		try {
-			await AuthService.logout()
-		} catch (error) {
-			return rejectWithValue(error)
-		}
-	}
-)
 
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
 	reducers: {},
 	extraReducers(builder) {
-		builder.addCase(register.pending, () => {
+		// === Registration ====
+		builder.addCase(register.pending, state => {
 			console.log('Register pending')
+			state.loading = true
+			state.errors = []
 		})
-		builder.addCase(register.fulfilled, () => {
+		builder.addCase(register.fulfilled, (state, action) => {
 			console.log('Register fulfilled')
-		})
-		builder.addCase(register.rejected, () => {
-			console.log('Register rejected')
-		})
-
-		builder.addCase(login.pending, () => {
-			console.log('Login pending')
-		})
-		builder.addCase(login.fulfilled, (state, action) => {
-			console.log('Login fulfilled')
+			state.loading = false
+			state.success = true
+			state.isAuth = true
 			state.currentUser = action.payload.currentUser
 		})
-		builder.addCase(login.rejected, state => {
-			console.log('Login rejected')
+		builder.addCase(register.rejected, (state, action) => {
+			console.log('Register rejected')
+			state.loading = false
+			state.errors = action.payload as IValidationErrorResponse[]
+			state.isAuth = false
 			state.currentUser = {} as IUser
 		})
 
-		builder.addCase(logout.pending, () => {
+		// === Login ====
+		builder.addCase(login.pending, state => {
+			console.log('Login pending')
+			state.loading = true
+			state.errors = []
+		})
+		builder.addCase(login.fulfilled, (state, action) => {
+			console.log('Login fulfilled')
+			state.loading = false
+			state.success = true
+			state.isAuth = true
+			state.currentUser = action.payload.currentUser
+		})
+		builder.addCase(login.rejected, (state, action) => {
+			console.log('Login rejected. payload:', action.payload)
+			state.loading = false
+			state.errors = action.payload as IValidationErrorResponse[]
+			state.isAuth = false
+			state.currentUser = {} as IUser
+			// state.errors = action.payload.errors || []
+		})
+
+		// === Logout ====
+		builder.addCase(logout.pending, state => {
 			console.log('Logout pending')
+			state.loading = true
+			state.errors = []
 		})
-		builder.addCase(logout.fulfilled, () => {
+		builder.addCase(logout.fulfilled, state => {
 			console.log('Logout fulfilled')
+			state.loading = false
+			state.success = true
+			state.errors = [] as IValidationErrorResponse[]
+			state.currentUser = {} as IUser
 		})
-		builder.addCase(logout.rejected, () => {
+		builder.addCase(logout.rejected, (state, action) => {
 			console.log('Logout rejected')
+			state.loading = false
+			state.errors = action.payload as IValidationErrorResponse[]
+			state.currentUser = {} as IUser
 		})
 	},
 })
 
 export default authSlice.reducer
 
+export const selectIsAuth = (state: IRootState) => state.auth.isAuth
 export const selectCurrentUser = (state: IRootState) => state.auth.currentUser
+export const selectLoading = (state: IRootState) => state.auth.loading
+export const selectSuccess = (state: IRootState) => state.auth.success
+export const selectErrors = (state: IRootState) => state.auth.errors
