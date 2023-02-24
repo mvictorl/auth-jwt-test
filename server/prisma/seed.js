@@ -7,7 +7,7 @@ async function seed() {
 
 	const victor = await prisma.user.create({
 		data: {
-			name: 'Victor',
+			username: 'Victor',
 			email: 'victor@ya.ru',
 			password: '$2a$12$HSatSNIV0YIQMXAtPTMhs.EiniHXyPr3UqK87Ks8zlU.Un3G0R7sC', // '123456'
 			isActivated: true,
@@ -17,7 +17,7 @@ async function seed() {
 
 	const kyle = await prisma.user.create({
 		data: {
-			name: 'Kyle',
+			username: 'Kyle',
 			email: 'kyle@ya.ru',
 			password: '$2a$12$HSatSNIV0YIQMXAtPTMhs.EiniHXyPr3UqK87Ks8zlU.Un3G0R7sC', // '123456'
 			roles: ['GUEST'],
@@ -28,7 +28,7 @@ async function seed() {
 
 	const sally = await prisma.user.create({
 		data: {
-			name: 'Sally',
+			username: 'Sally',
 			email: 'sally@ya.ru',
 			password: '$2a$12$HSatSNIV0YIQMXAtPTMhs.EiniHXyPr3UqK87Ks8zlU.Un3G0R7sC', // '123456'
 			roles: ['GUEST'],

@@ -8,6 +8,7 @@ import SignUp from './components/auth/SignUp'
 import SignIn from './components/auth/SignIn'
 import RestorePwd from './components/auth/RestorePwd'
 import PasswordRestoreCode from './pages/PasswordRestoreCode'
+import TesterPage from './pages/TesterPage'
 
 export const Router = createBrowserRouter([
 	{
@@ -34,6 +35,10 @@ export const Router = createBrowserRouter([
 			{
 				path: '/restored',
 				element: <PasswordRestoreCode />,
+			},
+			{
+				path: '/tester',
+				element: <TesterPage />,
 			},
 		],
 	},

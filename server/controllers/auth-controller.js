@@ -8,12 +8,23 @@ class AuthContriller {
 		try {
 			const validationErrors = validationResult(req)
 			if (!validationErrors.isEmpty()) {
-				return next(
-					ApiError.ValidationError('Validation error', validationErrors.array())
-				)
+				const arr = validationErrors.array()
+				arr.map(a => {
+					if (a.param === 'password' || 'passwordConfirm') {
+						return { ...a, value: '' }
+					}
+				})
+				return next(ApiError.ValidationError('Validation error', arr))
 			}
 
 			const { username, email, password, firstName, lastName } = req.body
+			console.log('Input data:', {
+				username,
+				email,
+				password,
+				firstName,
+				lastName,
+			})
 			const userData = await authSrv.signup(
 				username,
 				email,
@@ -34,11 +45,15 @@ class AuthContriller {
 
 	async signin(req, res, next) {
 		try {
-			const errors = validationResult(req)
-			if (!errors.isEmpty()) {
-				return next(
-					ApiError.ValidationError('Validation error', errors.array())
-				)
+			const validationErrors = validationResult(req)
+			if (!validationErrors.isEmpty()) {
+				const arr = validationErrors.array()
+				arr.map(a => {
+					if (a.param === 'password') {
+						return { ...a, value: '' }
+					}
+				})
+				return next(ApiError.ValidationError('Validation error', arr))
 			}
 
 			const { username, password, remember = false } = req.body
@@ -56,6 +71,30 @@ class AuthContriller {
 			next(e)
 		}
 	}
+	// async signin(req, res, next) {
+	// 	try {
+	// 		const errors = validationResult(req)
+	// 		if (!errors.isEmpty()) {
+	// 			return next(
+	// 				ApiError.ValidationError('Validation error', errors.array())
+	// 			)
+	// 		}
+
+	// 		const { username, password, remember = false } = req.body
+	// 		const userData = await authSrv.signin(username, password)
+
+	// 		if (remember) {
+	// 			res.cookie('refreshToken', userData.tokens.refreshToken, {
+	// 				httpOnly: true,
+	// 				maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days as refresh token
+	// 			})
+	// 		}
+
+	// 		return res.json(new ResponseUserDTO(userData))
+	// 	} catch (e) {
+	// 		next(e)
+	// 	}
+	// }
 
 	async signout(req, res, next) {
 		try {

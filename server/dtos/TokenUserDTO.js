@@ -1,12 +1,12 @@
 module.exports = class TokenUserDTO {
 	id
-	name
+	username
 	roles = ['USER']
 	isActivated = false
 
 	constructor(model) {
 		this.id = model.id
-		this.name = model.name
+		this.username = model.username
 		this.roles = model.roles
 		this.isActivated = model.isActivated
 	}

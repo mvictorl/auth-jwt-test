@@ -14,7 +14,7 @@
 
 class UserDTO {
 	id
-	name
+	username
 	firstName = ''
 	lastName = ''
 	roles = ['USER']
@@ -22,7 +22,7 @@ class UserDTO {
 
 	constructor(model) {
 		this.id = model.id
-		this.name = model.name
+		this.username = model.username
 		this.firstName = model.firstName
 		this.lastName = model.lastName
 		this.roles = model.roles

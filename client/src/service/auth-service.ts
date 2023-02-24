@@ -34,7 +34,8 @@ async function login(
 }
 
 async function logout(): Promise<IAuthResponse> {
-	const response = await $api.post('/uauth/signout')
+	const response = await $api.post('/auth/signout')
+	console.log('Service Logout', response)
 	return response.data
 }
 

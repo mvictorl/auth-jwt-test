@@ -1,9 +1,18 @@
 import { Outlet } from 'react-router-dom'
-import { Box, Container, CssBaseline, Typography } from '@mui/material'
+import {
+	Backdrop,
+	Box,
+	Container,
+	CssBaseline,
+	Typography,
+} from '@mui/material'
 import Copyright from './Copyright'
 import AppBar from './AppBar'
+import { selectLoading, useAppSelector } from '../store/hooks/stateHooks'
+import CircularProgress from '@mui/material/CircularProgress'
 
 const Root = () => {
+	const loading = useAppSelector(selectLoading)
 	return (
 		<Box
 			sx={{
@@ -13,6 +22,12 @@ const Root = () => {
 			}}
 		>
 			<CssBaseline />
+			<Backdrop
+				sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+				open={loading}
+			>
+				<CircularProgress color="inherit" />
+			</Backdrop>
 			<AppBar />
 			<Container component="main" sx={{ marginY: 2 }} maxWidth="sm">
 				<Outlet />

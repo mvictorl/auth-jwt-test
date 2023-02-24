@@ -26,10 +26,10 @@ export const register = createAsyncThunk(
 			const data = await AuthService.register(
 				username,
 				email,
-				firstName,
-				lastName,
 				password,
-				passwordConfirm
+				passwordConfirm,
+				firstName,
+				lastName
 			)
 			if (!data.user || !data.accessToken) throw Error('Server error on Login')
 			else {
@@ -72,7 +72,7 @@ export const logout = createAsyncThunk(
 	'auth/logout',
 	async ({}, { rejectWithValue }) => {
 		try {
-			await AuthService.logout()
+			return await AuthService.logout()
 		} catch (error) {
 			return rejectWithValue(error)
 		}

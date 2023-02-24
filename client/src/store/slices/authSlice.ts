@@ -17,7 +17,11 @@ const initialState = {
 const authSlice = createSlice({
 	name: 'auth',
 	initialState,
-	reducers: {},
+	reducers: {
+		clearError: state => {
+			state.errors = []
+		},
+	},
 	extraReducers(builder) {
 		// === Registration ====
 		builder.addCase(register.pending, state => {
@@ -29,8 +33,8 @@ const authSlice = createSlice({
 			console.log('Register fulfilled')
 			state.loading = false
 			state.success = true
-			state.isAuth = true
 			state.currentUser = action.payload.currentUser
+			state.isAuth = true
 		})
 		builder.addCase(register.rejected, (state, action) => {
 			console.log('Register rejected')
@@ -42,24 +46,22 @@ const authSlice = createSlice({
 
 		// === Login ====
 		builder.addCase(login.pending, state => {
-			console.log('Login pending')
+			state.isAuth = false
 			state.loading = true
 			state.errors = []
 		})
 		builder.addCase(login.fulfilled, (state, action) => {
-			console.log('Login fulfilled')
-			state.loading = false
 			state.success = true
-			state.isAuth = true
 			state.currentUser = action.payload.currentUser
+			state.isAuth = true
+			state.loading = false
 		})
 		builder.addCase(login.rejected, (state, action) => {
-			console.log('Login rejected. payload:', action.payload)
-			state.loading = false
-			state.errors = action.payload as IValidationErrorResponse[]
 			state.isAuth = false
 			state.currentUser = {} as IUser
-			// state.errors = action.payload.errors || []
+			state.errors = action.payload as IValidationErrorResponse[]
+			console.log('Login Reject', state.errors)
+			state.loading = false
 		})
 
 		// === Logout ====
@@ -73,21 +75,19 @@ const authSlice = createSlice({
 			state.loading = false
 			state.success = true
 			state.errors = [] as IValidationErrorResponse[]
+			state.isAuth = false
 			state.currentUser = {} as IUser
 		})
 		builder.addCase(logout.rejected, (state, action) => {
 			console.log('Logout rejected')
 			state.loading = false
-			state.errors = action.payload as IValidationErrorResponse[]
+			state.errors = [] as IValidationErrorResponse[]
 			state.currentUser = {} as IUser
+			state.isAuth = false
 		})
 	},
 })
 
-export default authSlice.reducer
+export const { clearError } = authSlice.actions
 
-export const selectIsAuth = (state: IRootState) => state.auth.isAuth
-export const selectCurrentUser = (state: IRootState) => state.auth.currentUser
-export const selectLoading = (state: IRootState) => state.auth.loading
-export const selectSuccess = (state: IRootState) => state.auth.success
-export const selectErrors = (state: IRootState) => state.auth.errors
+export default authSlice.reducer

@@ -11,17 +11,17 @@ class AuthService {
 			return await dbClient.user
 				.findFirstOrThrow({
 					where: {
-						OR: [{ name: username }, { email }],
+						OR: [{ username }, { email }],
 					},
 					select: {
-						name: true,
+						username: true,
 						email: true,
 					},
 				})
 				.then(
 					user => {
 						const errors = []
-						if (user.name === username)
+						if (user.username === username)
 							errors.push({
 								msg: `User ${username} already exist`,
 								param: 'username',
@@ -46,16 +46,20 @@ class AuthService {
 
 						const newUser = await dbClient.user.create({
 							data: {
-								name: username,
+								username,
 								email,
 								password: hashedPassword,
-								firstName,
-								lastName,
+								firstName: firstName
+									? firstName.charAt(0).toUpperCase() + firstName.slice(1)
+									: '',
+								lastName: lastName
+									? lastName.charAt(0).toUpperCase() + lastName.slice(1)
+									: '',
 								activationLink,
 							},
 							select: {
 								id: true,
-								name: true,
+								username: true,
 								firstName: true,
 								lastName: true,
 								roles: true,
@@ -81,10 +85,7 @@ class AuthService {
 				)
 		} catch (e) {
 			if (e.status === 422) {
-				throw ApiError.ValidationError(
-					`User ${username} already exist`,
-					e.errors
-				)
+				throw ApiError.ValidationError(e.message, e.errors)
 			} else {
 				throw new apiError.ServerError('Signup server error', e)
 			}
@@ -95,10 +96,10 @@ class AuthService {
 		try {
 			return await dbClient.user
 				.findUniqueOrThrow({
-					where: { name: username },
+					where: { username },
 					select: {
 						id: true,
-						name: true,
+						username: true,
 						password: true,
 						firstName: true,
 						lastName: true,
@@ -111,7 +112,7 @@ class AuthService {
 						if (!(await bcrypt.compare(password, user.password))) {
 							throw ApiError.ValidationError('Incorrect password', [
 								{
-									value: password,
+									value: '',
 									msg: 'Incorrect password',
 									param: 'password',
 									location: 'body',
@@ -133,12 +134,19 @@ class AuthService {
 						return { tokens, user }
 					},
 					err => {
-						throw new ApiError.ServerError('User not found', err)
+						throw ApiError.ValidationError('User not found', [
+							{
+								value: username,
+								msg: 'User not found',
+								param: 'username',
+								location: 'body',
+							},
+						])
 					}
 				)
 		} catch (e) {
 			if (e.status === 422) {
-				throw ApiError.ValidationError('Incorrect password', e.errors)
+				throw ApiError.ValidationError(e.message, e.errors)
 			} else {
 				console.error('Signin server error', e)
 				throw new ApiError.ServerError('Signup server error', e)
@@ -183,7 +191,7 @@ class AuthService {
 					},
 					select: {
 						id: true,
-						name: true,
+						username: true,
 						firstName: true,
 						lastName: true,
 						roles: true,
@@ -341,7 +349,7 @@ class AuthService {
 						data: { password: data.newPassword },
 						select: {
 							id: true,
-							name: true,
+							username: true,
 							firstName: true,
 							lastName: true,
 							roles: true,
@@ -365,7 +373,7 @@ class AuthService {
 					data: { password: hashedPassword },
 					select: {
 						id: true,
-						name: true,
+						username: true,
 						firstName: true,
 						lastName: true,
 						roles: true,
@@ -400,7 +408,7 @@ class AuthService {
 
 						const newUser = await dbClient.user.create({
 							data: {
-								name: username,
+								username,
 								email,
 								password: hashedPassword,
 								firstName,
@@ -409,7 +417,7 @@ class AuthService {
 							},
 							select: {
 								id: true,
-								name: true,
+								username: true,
 								firstName: true,
 								lastName: true,
 								roles: true,

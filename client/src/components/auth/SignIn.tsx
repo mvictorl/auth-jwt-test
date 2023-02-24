@@ -1,30 +1,40 @@
 import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Link as LinkRRD, useNavigate, useLocation } from 'react-router-dom'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
+import {
+	Avatar,
+	Button,
+	Box,
+	Checkbox,
+	CssBaseline,
+	Container,
+	Grid,
+	FormControlLabel,
+	IconButton,
+	InputAdornment,
+	Link,
+	TextField,
+	Typography,
+} from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Typography from '@mui/material/Typography'
-import Container from '@mui/material/Container'
+import Visibility from '@mui/icons-material/Visibility'
+import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import Copyright from '../Copyright'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { AppDispatch } from '../../store'
 import { login } from '../../store/actions/authActions'
-import { selectIsAuth, selectErrors } from '../../store/slices/authSlice'
+import {
+	selectErrors,
+	selectIsAuth,
+	useAppDispatch,
+	useAppSelector,
+} from '../../store/hooks/stateHooks'
+import { clearError } from '../../store/slices/authSlice'
 
 const theme = createTheme()
 
 function SignIn() {
-	const dispatch: AppDispatch = useDispatch()
-	const isAuth = useSelector(selectIsAuth)
-	const errors = useSelector(selectErrors)
+	const dispatch = useAppDispatch()
+	const isAuth = useAppSelector(selectIsAuth)
+	const errors = useAppSelector(selectErrors)
 
 	const { state, pathname } = useLocation()
 	const navigate = useNavigate()
@@ -34,7 +44,7 @@ function SignIn() {
 	const [password, setPassword] = useState<string>('')
 	const [passwordError, setPasswordError] = useState<string>(' ')
 	const [remember, setRemember] = useState<boolean>(false)
-	// const [passwordShow, setPasswordShow] = useState<boolean>(false)
+	const [passwordShow, setPasswordShow] = useState<boolean>(false)
 
 	useEffect(() => {
 		if (isAuth) {
@@ -56,20 +66,13 @@ function SignIn() {
 						break
 				}
 			})
+			dispatch(clearError())
 		}
 	}, [errors])
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		dispatch(login({ username, password, remember }))
-		// const data = new FormData(event.currentTarget)
-		// const objData = {
-		// 	username: data.get('username')!.toString(),
-		// 	password: data.get('password')!.toString(),
-		// 	remember: !!data.get('remember'),
-		// }
-
-		// dispatch(login(objData))
 	}
 
 	return (
@@ -120,17 +123,30 @@ function SignIn() {
 							fullWidth
 							name="password"
 							label="Password"
-							type="password"
+							type={passwordShow ? 'text' : 'password'}
 							id="password"
 							autoComplete="current-password"
 							error={passwordError !== ' '}
 							helperText={passwordError || ' '}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position="end">
+										<IconButton
+											aria-label="toggle password visibility"
+											onClick={() => setPasswordShow(!passwordShow)}
+											edge="end"
+										>
+											{passwordShow ? <VisibilityOff /> : <Visibility />}
+										</IconButton>
+									</InputAdornment>
+								),
+							}}
 						/>
 						<FormControlLabel
 							control={
 								<Checkbox
 									value={remember}
-									onChange={e => setRemember(!remember)}
+									onChange={() => setRemember(!remember)}
 									name="remember"
 									color="primary"
 								/>
