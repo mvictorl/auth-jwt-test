@@ -24,7 +24,7 @@ function AppBar() {
 		setAnchorElNav(event.currentTarget)
 	}
 
-	const handleCloseNavMenu = () => {
+	const handleCloseNavMenu = (): void => {
 		setAnchorElNav(null)
 	}
 
@@ -111,6 +111,20 @@ function AppBar() {
 									signin
 								</Typography>
 							</MenuItem>
+							<MenuItem onClick={handleCloseNavMenu}>
+								<Typography
+									to="/tester"
+									component={NavLink}
+									textAlign="center"
+									sx={{
+										textAlign: 'center',
+										textDecoration: 'none',
+										color: 'inherit',
+									}}
+								>
+									tester
+								</Typography>
+							</MenuItem>
 						</Menu>
 					</Box>
 					<AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -156,6 +170,14 @@ function AppBar() {
 							sx={{ my: 2, color: 'white', display: 'block' }}
 						>
 							signin
+						</Button>
+						<Button
+							to="/tester/exercises"
+							component={NavLink}
+							onClick={handleCloseNavMenu}
+							sx={{ my: 2, color: 'white', display: 'block' }}
+						>
+							tester
 						</Button>
 					</Box>
 

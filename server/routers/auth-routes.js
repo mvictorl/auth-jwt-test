@@ -1,8 +1,8 @@
 const Router = require('express').Router
 const router = new Router()
+
 const { body, param } = require('express-validator')
-const authCtrl = require('./controllers/auth-controller')
-const ApiError = require('./services/error-service')
+const authCtrl = require('../controllers/auth-controller')
 
 router.post(
 	'/auth/signup',
@@ -20,13 +20,9 @@ router.post(
 		.withMessage('No spaces are allowed in the Username'),
 	body('email').isEmail().withMessage('Incorrect email address'),
 	body('passwordConfirm').custom((value, { req }) => {
-		console.log('Confirm:', value, typeof value)
-		console.log('Password:', req.body.password, typeof req.body.password)
 		if (value !== req.body.password) {
-			console.log('Reject')
 			return Promise.reject('Password confirmation is incorrect')
 		} else {
-			console.log('Resolve')
 			return Promise.resolve()
 		}
 	}),
@@ -38,24 +34,6 @@ router.post(
 		.withMessage(
 			`Password mast be from ${process.env.PASSWORD_MIN_LENGTH} to ${process.env.PASSWORD_MAX_LENGTH} characrets`
 		),
-
-	// .bail()
-	// .custom(async (value, { req }) => {
-	// 	if (value != req.body.passwordConfirm) {
-	// 		throw new Error('Password confirmation is incorrect')
-	// throw new ApiError.ValidationError(
-	// 	'Password confirmation is incorrect',
-	// 	[
-	// 		{
-	// 			value: '',
-	// 			msg: 'Incorrect password confirmation',
-	// 			param: 'passwordConfirm',
-	// 			location: 'body',
-	// 		},
-	// 	]
-	// )
-	// 	}
-	// }),
 	body('firstName')
 		.optional()
 		.toLowerCase()

@@ -2,14 +2,17 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["auth", "tester"]
 }
 
+// Auth models
 model User {
   id             String       @id @default(uuid())
   username       String       @unique
@@ -22,6 +25,8 @@ model User {
   activationLink String?
   roles          Role[]       @default([USER])
   NewPassword    NewPassword?
+
+  @@schema("auth")
 }
 
 model Token {
@@ -29,6 +34,8 @@ model Token {
   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  String @unique
   refresh String
+
+  @@schema("auth")
 }
 
 model NewPassword {
@@ -37,6 +44,8 @@ model NewPassword {
   userId      String @unique
   newPassword String
   restoreLink String @unique
+
+  @@schema("auth")
 }
 
 enum Role {
@@ -44,4 +53,36 @@ enum Role {
   USER
   MANAGER
   ADMIN
+
+  @@schema("auth")
+}
+
+// Tester models
+model Exercise {
+  id         String     @id @default(uuid())
+  title      String
+  questions  Question[]
+  isMultiple Boolean    @default(false)
+
+  @@schema("tester")
+}
+
+model Question {
+  id         String   @id @default(uuid())
+  Exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  exerciseId String
+  text       String
+  answers    Answer[]
+
+  @@schema("tester")
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  Question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  text       String
+  isCorrect  Boolean  @default(false)
+
+  @@schema("tester")
 }

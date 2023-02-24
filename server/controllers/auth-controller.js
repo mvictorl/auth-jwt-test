@@ -18,13 +18,6 @@ class AuthContriller {
 			}
 
 			const { username, email, password, firstName, lastName } = req.body
-			console.log('Input data:', {
-				username,
-				email,
-				password,
-				firstName,
-				lastName,
-			})
 			const userData = await authSrv.signup(
 				username,
 				email,

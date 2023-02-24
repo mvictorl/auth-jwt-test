@@ -36,6 +36,55 @@ async function seed() {
 			activationLink: 'fdddce36-93ef-49d4-9377-46aefcff711f',
 		},
 	})
+
+	const pdd = await prisma.exercise.create({
+		data: {
+			title: 'Правила дорожного движения',
+			isMultiple: false,
+			questions: {
+				create: [
+					{
+						text: 'Максимальная скорость движения в населённом пункте',
+						answers: {
+							create: [
+								{
+									text: '50 км/ч',
+									isCorrect: false,
+								},
+								{
+									text: '60 км/ч',
+									isCorrect: true,
+								},
+								{
+									text: '90 км/ч',
+									isCorrect: false,
+								},
+							],
+						},
+					},
+					{
+						text: 'Максимальная скорость движения вне населённого пункта',
+						answers: {
+							create: [
+								{
+									text: '50 км/ч',
+									isCorrect: false,
+								},
+								{
+									text: '60 км/ч',
+									isCorrect: false,
+								},
+								{
+									text: '90 км/ч',
+									isCorrect: true,
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	})
 }
 
 seed()
