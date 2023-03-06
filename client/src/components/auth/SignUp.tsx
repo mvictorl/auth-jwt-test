@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField'
 import Link from '@mui/material/Link'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from '../Copyright'
@@ -20,6 +20,7 @@ import {
 	useAppSelector,
 } from '../../store/hooks/stateHooks'
 import { clearError } from '../../store/slices/authSlice'
+import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
 
 const theme = createTheme()
 
@@ -62,7 +63,7 @@ function SignUp() {
 		if (errors.length > 0) {
 			console.log('Errors:', errors)
 
-			errors.forEach(e => {
+			errors.forEach((e: IValidationErrorResponse) => {
 				switch (e.param) {
 					case 'username':
 						setUsernameError(e.msg)

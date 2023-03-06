@@ -29,7 +29,7 @@ const Root = () => {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			<AppBar />
-			<Container component="main" sx={{ marginY: 2 }} maxWidth="sm">
+			<Container component="main" sx={{ marginY: 2 }} maxWidth="xl">
 				<Outlet />
 			</Container>
 			<Box

@@ -5,6 +5,17 @@ async function seed() {
 	await prisma.user.deleteMany({})
 	await prisma.token.deleteMany({})
 
+	const admin = await prisma.user.create({
+		data: {
+			id: '131e1ed4-e2c3-4f74-91b2-d93dd652ec9c',
+			username: 'Admin',
+			email: 'admin@localhost',
+			password: '$2a$12$HSatSNIV0YIQMXAtPTMhs.EiniHXyPr3UqK87Ks8zlU.Un3G0R7sC', // '123456'
+			isActivated: true,
+			roles: ['ADMIN'],
+		},
+	})
+
 	const victor = await prisma.user.create({
 		data: {
 			username: 'Victor',
@@ -76,6 +87,63 @@ async function seed() {
 								},
 								{
 									text: '90 км/ч',
+									isCorrect: true,
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	})
+
+	const programm = await prisma.exercise.create({
+		data: {
+			title: 'Программирование',
+			isMultiple: true,
+			questions: {
+				create: [
+					{
+						text: 'Объекто-ориентированные языки',
+						answers: {
+							create: [
+								{
+									text: 'С',
+									isCorrect: false,
+								},
+								{
+									text: 'С++',
+									isCorrect: true,
+								},
+								{
+									text: 'JavaScript',
+									isCorrect: true,
+								},
+								{
+									text: 'Pascal',
+									isCorrect: false,
+								},
+							],
+						},
+					},
+					{
+						text: 'Языки программирования',
+						answers: {
+							create: [
+								{
+									text: 'JavaScript',
+									isCorrect: true,
+								},
+								{
+									text: 'HTML',
+									isCorrect: false,
+								},
+								{
+									text: 'TypeScript',
+									isCorrect: false,
+								},
+								{
+									text: 'Basic',
 									isCorrect: true,
 								},
 							],

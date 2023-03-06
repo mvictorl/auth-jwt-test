@@ -47,8 +47,10 @@
 
    1. **vite** (for example, CRA not supported tailwind viz. PosCSS)
       `yarn create vite client --template react-ts` (to start dev-server: `yarn dev`)
+
    2. **axios**
       `npm i axios`
+
    3. **MUI**
       1. `npm install @mui/material @emotion/react @emotion/styled`
       2. `npm install @fontsource/roboto`
@@ -60,6 +62,7 @@
          import '@fontsource/roboto/700.css'
          ```
       4. `npm install @mui/icons-material`
+
    4. React Router DOM
 
       `npm i react-router-dom` (v.6.x.x)

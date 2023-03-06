@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const auth_router = require('./routers/auth-routes')
+const tester_router = require('./routers/tester-routes')
 const authErrorMiddleware = require('./middlewares/auth-error-middleware')
 
 const PORT = process.env.SERVER_PORT || 5000
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use('/api', auth_router)
+app.use('/api', tester_router)
 app.use(authErrorMiddleware)
 
 const startServer = () => {

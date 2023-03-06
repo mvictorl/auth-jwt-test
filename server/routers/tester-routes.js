@@ -5,7 +5,13 @@ const testerCtrl = require('../controllers/tester-controller')
 
 const { body, param } = require('express-validator')
 
-router.get('/tester/exercises', testerCtrl.getAllExercise)
+router.get('/tester/exercises', testerCtrl.getAllExercises)
+
+router.post('/tester/exercises', testerCtrl.addExercise)
+
+router.patch('/tester/exercises', testerCtrl.changeExercises)
+
+router.delete('/tester/exercises/:id', testerCtrl.deleteExercise)
 // routes.post(
 // 	'/auth/signup',
 

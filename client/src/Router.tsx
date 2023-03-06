@@ -9,7 +9,9 @@ import SignIn from './components/auth/SignIn'
 import RestorePwd from './components/auth/RestorePwd'
 import PasswordRestoreCode from './pages/PasswordRestoreCode'
 import TesterPage from './pages/TesterPage'
-import ExerciseList from './components/tester/exerciseList'
+import ExerciseList from './components/tester/ExerciseList'
+import AddExercise from './components/tester/AddExercise'
+import EditExercise from './components/tester/EditExercise'
 
 export const Router = createBrowserRouter([
 	{
@@ -43,7 +45,20 @@ export const Router = createBrowserRouter([
 				children: [
 					{
 						path: 'exercises',
-						element: <ExerciseList />,
+						children: [
+							{
+								index: true,
+								element: <ExerciseList />,
+							},
+							{
+								path: 'add',
+								element: <AddExercise />,
+							},
+							{
+								path: 'edit/:id',
+								element: <EditExercise />,
+							},
+						],
 					},
 				],
 			},

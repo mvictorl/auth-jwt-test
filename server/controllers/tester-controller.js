@@ -4,9 +4,48 @@ const testerSrv = require('../services/tester-service')
 // const ResponseUserDTO = require('../dtos/ResponseUserDTO')
 
 class TesterContriller {
-	async getAllExercise(req, res, next) {
+	async getAllExercises(req, res, next) {
 		try {
-			const data = testerSrv()
+			const data = await testerSrv.getAllExercises()
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+
+	async addExercise(req, res, next) {
+		try {
+			const { title, isMultiple, authorId, description } = req.body
+			const data = await testerSrv.addExercise(
+				title,
+				isMultiple,
+				authorId,
+				description
+			)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+
+	async changeExercises(req, res, next) {
+		try {
+			const { id, title, isMultiple, description } = req.body
+			const data = await testerSrv.changeExercise(
+				id,
+				title,
+				isMultiple,
+				description
+			)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+
+	async deleteExercise(req, res, next) {
+		try {
+			const data = await testerSrv.deleteExercise(req.params.id)
 			return res.json(data)
 		} catch (e) {
 			console.error('Tester Controller error:', e)

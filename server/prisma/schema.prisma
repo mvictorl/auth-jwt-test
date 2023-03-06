@@ -25,6 +25,7 @@ model User {
   activationLink String?
   roles          Role[]       @default([USER])
   NewPassword    NewPassword?
+  Exercise       Exercise[]
 
   @@schema("auth")
 }
@@ -59,10 +60,13 @@ enum Role {
 
 // Tester models
 model Exercise {
-  id         String     @id @default(uuid())
-  title      String
-  questions  Question[]
-  isMultiple Boolean    @default(false)
+  id          String     @id @default(uuid())
+  title       String
+  description String?    @default("")
+  questions   Question[]
+  isMultiple  Boolean    @default(false)
+  author      User       @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  userId      String     @default("131e1ed4-e2c3-4f74-91b2-d93dd652ec9c")
 
   @@schema("tester")
 }

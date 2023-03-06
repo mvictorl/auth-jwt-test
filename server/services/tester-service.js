@@ -1,13 +1,61 @@
 const dbClient = require('../prisma/dbClient')
 
 class TesterService {
-	async getAllExercise() {
+	async getAllExercises() {
 		try {
 			return await dbClient.exercise.findMany()
 		} catch (e) {
 			console.error('Tester Service error:', e)
 		}
 	}
+
+	async addExercise(title, isMultiple, authorId, description = '') {
+		try {
+			return await dbClient.exercise.create({
+				data: { title, isMultiple, userId: authorId, description },
+				select: {
+					title: true,
+					isMultiple: true,
+					author: true,
+					description: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+
+	async changeExercise(id, title, isMultiple, description = '') {
+		try {
+			return await dbClient.exercise.update({
+				where: { id },
+				data: { title, isMultiple },
+				select: {
+					title: true,
+					isMultiple: true,
+					author: true,
+					description: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+
+	async deleteExercise(id) {
+		try {
+			return await dbClient.exercise.delete({
+				where: { id },
+				select: {
+					id: true,
+					title: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+
 	// async signup(username, email, password, firstName = '', lastName = '') {
 	// 	try {
 	// 		return await dbClient.user

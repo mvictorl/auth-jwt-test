@@ -15,9 +15,11 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Visibility from '@mui/icons-material/Visibility'
-import VisibilityOff from '@mui/icons-material/VisibilityOff'
+import {
+	LockOutlined as LockOutlinedIcon,
+	Visibility,
+	VisibilityOff,
+} from '@mui/icons-material'
 import Copyright from '../Copyright'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { login } from '../../store/actions/authActions'
@@ -28,6 +30,7 @@ import {
 	useAppSelector,
 } from '../../store/hooks/stateHooks'
 import { clearError } from '../../store/slices/authSlice'
+import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
 
 const theme = createTheme()
 
@@ -54,7 +57,7 @@ function SignIn() {
 
 	useEffect(() => {
 		if (errors.length > 0) {
-			errors.forEach(e => {
+			errors.forEach((e: IValidationErrorResponse) => {
 				switch (e.param) {
 					case 'username':
 						setUsernameError(e.msg)
