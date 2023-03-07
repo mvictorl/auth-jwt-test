@@ -13,7 +13,7 @@ import {
 } from '../store/hooks/stateHooks'
 
 const TesterPage = () => {
-	const loading = useAppSelector(selectLoadingExercise)
+	// const loading = useAppSelector(selectLoadingExercise)
 	const { pathname } = useLocation()
 
 	return (
@@ -21,7 +21,8 @@ const TesterPage = () => {
 			<CssBaseline />
 			<Backdrop
 				sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-				open={loading}
+				// open={loading}
+				open={false}
 			>
 				<CircularProgress color="inherit" />
 			</Backdrop>

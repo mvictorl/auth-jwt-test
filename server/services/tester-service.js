@@ -9,10 +9,40 @@ class TesterService {
 		}
 	}
 
-	async addExercise(title, isMultiple, authorId, description = '') {
+	async getExerciseById(id) {
+		try {
+			return await dbClient.exercise.findUnique({
+				where: { id },
+				select: {
+					id: true,
+					title: true,
+					description: true,
+					isMultiple: true,
+					userId: true,
+					questions: {
+						select: {
+							id: true,
+							text: true,
+							answers: {
+								select: {
+									id: true,
+									text: true,
+									isCorrect: true,
+								},
+							},
+						},
+					},
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+
+	async addExercise(title, isMultiple, userId, description = '') {
 		try {
 			return await dbClient.exercise.create({
-				data: { title, isMultiple, userId: authorId, description },
+				data: { title, isMultiple, userId, description },
 				select: {
 					title: true,
 					isMultiple: true,
@@ -29,7 +59,7 @@ class TesterService {
 		try {
 			return await dbClient.exercise.update({
 				where: { id },
-				data: { title, isMultiple },
+				data: { title, isMultiple, description },
 				select: {
 					title: true,
 					isMultiple: true,

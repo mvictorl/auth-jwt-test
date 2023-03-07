@@ -1,48 +1,31 @@
-import { useState, useEffect } from 'react'
-import {
-	Link as LinkRRD,
-	useNavigate,
-	useLocation,
-	Navigate,
-} from 'react-router-dom'
+import { RuleFolder as FolderIcon } from '@mui/icons-material'
 import {
 	Avatar,
-	Button,
 	Box,
+	Button,
 	Checkbox,
-	CssBaseline,
 	Container,
-	Grid,
+	CssBaseline,
 	FormControlLabel,
-	IconButton,
-	InputAdornment,
-	Link,
 	TextField,
 	Typography,
 } from '@mui/material'
-import {
-	LockOutlined as LockOutlinedIcon,
-	RuleFolder as FolderIcon,
-	Visibility,
-	VisibilityOff,
-} from '@mui/icons-material'
-import Copyright from '../Copyright'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { login } from '../../store/actions/authActions'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { useState } from 'react'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import {
 	selectCurrentUser,
-	selectErrors,
 	selectIsAuth,
 	useAppDispatch,
 	useAppSelector,
 } from '../../store/hooks/stateHooks'
-import { clearError } from '../../store/slices/authSlice'
-import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
-import { addExercise } from '../../store/actions/testerActions'
+import { useAddNewExerciseMutation } from '../../store/query/testerApi'
 
 const theme = createTheme()
 
 function AddExercise() {
+	const [addExercise, { error, isLoading }] = useAddNewExerciseMutation()
+
 	const dispatch = useAppDispatch()
 	const isAuth = useAppSelector(selectIsAuth)
 	const currentUser = useAppSelector(selectCurrentUser)
@@ -51,7 +34,7 @@ function AddExercise() {
 	const navigate = useNavigate()
 
 	const [titleExercise, setTitleExercise] = useState<string>('')
-  const [descriptionExercise, setDescriptionExercise] = useState<string>('')
+	const [descriptionExercise, setDescriptionExercise] = useState<string>('')
 	// const [usernameError, setUsernameError] = useState<string>(' ')
 	// const [password, setPassword] = useState<string>('')
 	// const [passwordError, setPasswordError] = useState<string>(' ')
@@ -59,14 +42,12 @@ function AddExercise() {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		dispatch(
-			addExercise({
-				title: titleExercise,
-				isMultiple: isMultipleExercise,
-        description: descriptionExercise,
-				authorId: currentUser.id,
-			})
-		)
+		addExercise({
+			title: titleExercise,
+			isMultiple: isMultipleExercise,
+			description: descriptionExercise,
+			userId: currentUser.id,
+		})
 		navigate(state?.from || '/tester/exercises')
 	}
 
@@ -111,8 +92,8 @@ function AddExercise() {
 							// helperText={usernameError || ' '}
 							autoFocus
 						/>
-						
-            <TextField
+
+						<TextField
 							onChange={e => setDescriptionExercise(e.target.value)}
 							// onFocus={() => setUsernameError(' ')}
 							value={descriptionExercise}

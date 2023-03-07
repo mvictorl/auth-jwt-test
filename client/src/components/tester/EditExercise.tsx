@@ -26,13 +26,15 @@ import {
 	useAppDispatch,
 	useAppSelector,
 } from '../../store/hooks/stateHooks'
-import { clearError } from '../../store/slices/authSlice'
-import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
-import { changeExercises } from '../../store/actions/testerActions'
+// import { clearError } from '../../store/slices/authSlice'
+// import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
+// import { changeExercises } from '../../store/actions/testerActions'
+import { useChangeExerciseMutation } from '../../store/query/testerApi'
 
 const theme = createTheme()
 
 function EditExercise() {
+	const [changeExercise, { error, isLoading }] = useChangeExerciseMutation()
 	const dispatch = useAppDispatch()
 	const isAuth = useAppSelector(selectIsAuth)
 	const currentUser = useAppSelector(selectCurrentUser)
@@ -53,21 +55,15 @@ function EditExercise() {
 		state.exercise.isMultiple
 	)
 
-	// useEffect(() => {
-	// 	setTitleExercise()
-	// 	setIsMultipleExercise()
-	// }, [])
-
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		dispatch(
-			changeExercises({
-				id: state.exercise.id,
-				title: titleExercise,
-				isMultiple: isMultipleExercise,
-				description: descriptionExercise,
-			})
-		)
+		changeExercise({
+			id: state.exercise.id,
+			title: titleExercise,
+			isMultiple: isMultipleExercise,
+			description: descriptionExercise,
+			userId: state.exercise.userId,
+		})
 		navigate(state?.from || '/tester/exercises')
 	}
 

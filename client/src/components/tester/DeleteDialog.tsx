@@ -10,14 +10,19 @@ import {
 
 type DeleteDialogProps = {
 	open: boolean
+	onOkDialog: () => void
 	onCloseDialog: () => void
 }
 
-const DeleteDialog = ({ open, onCloseDialog }: DeleteDialogProps) => {
+const DeleteDialog = ({
+	open,
+	onOkDialog,
+	onCloseDialog,
+}: DeleteDialogProps) => {
 	// const [open, setOpen] = useState(false)
 
 	const handleOk = () => {
-		onCloseDialog()
+		onOkDialog()
 	}
 
 	const handleCancel = () => {

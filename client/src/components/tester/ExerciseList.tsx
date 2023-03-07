@@ -1,9 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link as LinkRRD, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import {
 	selectCurrentUser,
-	selectExercises,
 	selectIsAuth,
 	useAppDispatch,
 	useAppSelector,
@@ -13,11 +12,11 @@ import {
 	deleteExercise,
 	getAllExercises,
 } from '../../store/actions/testerActions'
-import { IExercise } from '../../interfaces/IExercise'
 import { styled } from '@mui/material/styles'
 import {
 	Avatar,
 	Box,
+	Button,
 	Container,
 	Grid,
 	IconButton,
@@ -35,30 +34,50 @@ import {
 	Delete as DeleteIcon,
 } from '@mui/icons-material'
 import DeleteDialog from './DeleteDialog'
+import { IExerciseId } from '../../interfaces/IExerciseId'
+import {
+	useDeleteExerciseByIDMutation,
+	useGetAllExerciseQuery,
+} from '../../store/query/testerApi'
+import { IExerciseFull } from '../../interfaces/IExerciseFull'
+import {
+	setCurrentExercise,
+	clearCurrentExercise,
+} from '../../store/slices/exerciseSlice'
 
 const ExerciseList = () => {
+	const [deleteExercise, { isSuccess, isError }] =
+		useDeleteExerciseByIDMutation()
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false)
+	const [candidateToDelete, setCandidateToDelete] = useState<string>('')
 
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
 	const isAuth = useAppSelector(selectIsAuth)
 	const currentUser = useAppSelector(selectCurrentUser)
-	const exercises = useAppSelector(selectExercises)
+	// const exercises = useAppSelector(selectExercises)
+
+	const { data, error, isLoading } = useGetAllExerciseQuery()
 
 	const StyledDiv = styled('div')(({ theme }) => ({
 		backgroundColor: theme.palette.background.paper,
 	}))
 
-	useEffect(() => {
-		dispatch(getAllExercises())
-	}, [])
+	// const handleChooseExercise = (id: string) => {
+	// 	dispatch(setCurrentExercise(id))
+	// }
 
+	const handleOnOk = () => {
+		deleteExercise(candidateToDelete)
+		setDeleteDialogOpen(false)
+		setCandidateToDelete('')
+	}
 	const handleOnClose = () => {
 		setDeleteDialogOpen(false)
 	}
 
-	const handleEditBtn = (e: IExercise) => {
+	const handleEditBtn = (e: IExerciseId) => {
 		navigate(`/tester/exercises/edit/${e.id}`, {
 			state: {
 				from: pathname,
@@ -68,12 +87,11 @@ const ExerciseList = () => {
 	}
 
 	const handleDeleteBtn = (id: string) => {
+		setCandidateToDelete(id)
 		setDeleteDialogOpen(true)
-		// dispatch(deleteExercise({ id }))
-		// dispatch(getAllExercises())
 	}
 
-	const viewOwnerButtons = (e: IExercise) => {
+	const viewOwnerButtons = (e: IExerciseId) => {
 		if (
 			isAuth &&
 			(currentUser.id === e.userId || currentUser.roles.includes('ADMIN'))
@@ -101,16 +119,21 @@ const ExerciseList = () => {
 
 	return (
 		<Container maxWidth="md">
-			<DeleteDialog open={deleteDialogOpen} onCloseDialog={handleOnClose} />
+			<DeleteDialog
+				open={deleteDialogOpen}
+				onCloseDialog={handleOnClose}
+				onOkDialog={handleOnOk}
+			/>
+
 			<Grid item xs={12} md={6}>
-				{exercises && exercises.length > 0 ? (
+				{data && data.length > 0 ? (
 					<>
 						<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
 							Список тестов:
 						</Typography>
 						<StyledDiv>
 							<List>
-								{exercises.map(e => (
+								{data.map((e: IExerciseId) => (
 									<ListItem key={e.id} secondaryAction={viewOwnerButtons(e)}>
 										<ListItemAvatar>
 											<Avatar>

@@ -7,9 +7,11 @@ const { body, param } = require('express-validator')
 
 router.get('/tester/exercises', testerCtrl.getAllExercises)
 
+router.get('/tester/exercises/:id', testerCtrl.getExerciseById)
+
 router.post('/tester/exercises', testerCtrl.addExercise)
 
-router.patch('/tester/exercises', testerCtrl.changeExercises)
+router.patch('/tester/exercises', testerCtrl.changeExercise)
 
 router.delete('/tester/exercises/:id', testerCtrl.deleteExercise)
 // routes.post(

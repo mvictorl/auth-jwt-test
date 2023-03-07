@@ -13,13 +13,22 @@ class TesterContriller {
 		}
 	}
 
+	async getExerciseById(req, res, next) {
+		try {
+			const data = await testerSrv.getExerciseById(req.params.id)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+
 	async addExercise(req, res, next) {
 		try {
-			const { title, isMultiple, authorId, description } = req.body
+			const { title, isMultiple, userId, description } = req.body
 			const data = await testerSrv.addExercise(
 				title,
 				isMultiple,
-				authorId,
+				userId,
 				description
 			)
 			return res.json(data)
@@ -28,7 +37,7 @@ class TesterContriller {
 		}
 	}
 
-	async changeExercises(req, res, next) {
+	async changeExercise(req, res, next) {
 		try {
 			const { id, title, isMultiple, description } = req.body
 			const data = await testerSrv.changeExercise(

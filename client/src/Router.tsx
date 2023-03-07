@@ -12,6 +12,8 @@ import TesterPage from './pages/TesterPage'
 import ExerciseList from './components/tester/ExerciseList'
 import AddExercise from './components/tester/AddExercise'
 import EditExercise from './components/tester/EditExercise'
+import Exercise from './components/tester/Exercise'
+import Question from './components/tester/Question'
 
 export const Router = createBrowserRouter([
 	{
@@ -57,6 +59,20 @@ export const Router = createBrowserRouter([
 							{
 								path: 'edit/:id',
 								element: <EditExercise />,
+							},
+							{
+								path: ':id',
+								element: <Exercise />,
+								children: [
+									{
+										index: true,
+										element: <Question />,
+									},
+									// {
+									// 	path: 'question/:id',
+
+									// },
+								],
 							},
 						],
 					},
