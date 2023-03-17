@@ -86,6 +86,114 @@ class TesterService {
 		}
 	}
 
+	async addQuestion(exerciseId, text) {
+		try {
+			return await dbClient.exercise.update({
+				where: { id: exerciseId },
+				data: {
+					questions: {
+						create: {
+							text,
+						},
+					},
+				},
+				select: {
+					title: true,
+					isMultiple: true,
+					author: true,
+					questions: true,
+					description: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+	async changeQuestion(question) {
+		try {
+			return await dbClient.question.update({
+				where: { id: question.id },
+				data: {
+					text: question.text,
+				},
+				select: {
+					id: true,
+					text: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+	async deleteQuestion(question) {
+		try {
+			return await dbClient.question.delete({
+				where: { id: question.id },
+				select: {
+					id: true,
+					text: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+
+	async addAnswer(questionId, answer) {
+		try {
+			return await dbClient.question.update({
+				where: { id: questionId },
+				data: {
+					answers: {
+						create: {
+							text: answer.text,
+							isCorrect: answer.isCorrect,
+						},
+					},
+				},
+				select: {
+					id: true,
+					text: true,
+					answers: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+	async changeAnswer(answer) {
+		try {
+			return await dbClient.answer.update({
+				where: { id: answer.id },
+				data: {
+					text: answer.text,
+					isCorrect: answer.isCorrect,
+				},
+				select: {
+					id: true,
+					text: true,
+					isCorrect: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+	async deleteAnswer(answer) {
+		try {
+			return await dbClient.answer.delete({
+				where: { id: answer.id },
+				select: {
+					id: true,
+					text: true,
+					isCorrect: true,
+				},
+			})
+		} catch (e) {
+			console.error('Tester Service error:', e)
+		}
+	}
+
 	// async signup(username, email, password, firstName = '', lastName = '') {
 	// 	try {
 	// 		return await dbClient.user

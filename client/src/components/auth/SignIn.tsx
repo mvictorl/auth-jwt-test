@@ -148,7 +148,7 @@ function SignIn() {
 						<FormControlLabel
 							control={
 								<Checkbox
-									value={remember}
+									checked={remember}
 									onChange={() => setRemember(!remember)}
 									name="remember"
 									color="primary"

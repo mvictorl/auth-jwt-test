@@ -60,7 +60,7 @@ const AppBarUser = () => {
 			}
 		}
 		return {
-			sx: { bgcolor: stringToColor(out) },
+			sx: { bgcolor: stringToColor(user.username) },
 			children: out,
 		}
 	}

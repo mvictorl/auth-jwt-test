@@ -39,7 +39,8 @@ class TesterContriller {
 
 	async changeExercise(req, res, next) {
 		try {
-			const { id, title, isMultiple, description } = req.body
+			const id = req.params.id
+			const { title, isMultiple, description } = req.body
 			const data = await testerSrv.changeExercise(
 				id,
 				title,
@@ -60,6 +61,65 @@ class TesterContriller {
 			console.error('Tester Controller error:', e)
 		}
 	}
+
+	async addQuestion(req, res, next) {
+		try {
+			const exerciseId = req.params.eid
+			const { text } = req.body
+			const data = await testerSrv.addQuestion(exerciseId, text)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+	async changeQuestion(req, res, next) {
+		try {
+			const { question } = req.body
+			const data = await testerSrv.changeQuestion(question)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+	async deleteQuestion(req, res, next) {
+		try {
+			const { question } = req.body
+			const data = await testerSrv.deleteQuestion(question)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+
+	async addAnswer(req, res, next) {
+		try {
+			const questionId = req.params.qid
+			const { answer } = req.body
+			const data = await testerSrv.addAnswer(questionId, answer)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+	async changeAnswer(req, res, next) {
+		try {
+			const { answer } = req.body
+			const data = await testerSrv.changeAnswer(answer)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+	async deleteAnswer(req, res, next) {
+		try {
+			const { answer } = req.body
+			const data = await testerSrv.deleteAnswer(answer)
+			return res.json(data)
+		} catch (e) {
+			console.error('Tester Controller error:', e)
+		}
+	}
+
 	// async signup(req, res, next) {
 	// 	try {
 	// 		const validationErrors = validationResult(req)

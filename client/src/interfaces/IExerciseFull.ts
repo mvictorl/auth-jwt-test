@@ -1,10 +1,10 @@
-import { IQuestion } from './IQuestion'
+import { IQuestionId } from './IQuestionId'
 
 export interface IExerciseFull {
 	id: string
 	title: string
 	description: string
-	questions: IQuestion[]
+	questions: IQuestionId[]
 	isMultiple: boolean
 	userId: string
 }

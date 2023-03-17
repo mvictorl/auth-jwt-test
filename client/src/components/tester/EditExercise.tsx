@@ -57,13 +57,15 @@ function EditExercise() {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		changeExercise({
-			id: state.exercise.id,
-			title: titleExercise,
-			isMultiple: isMultipleExercise,
-			description: descriptionExercise,
-			userId: state.exercise.userId,
-		})
+		// changeExercise({
+		// 	id: state.exercise.id,
+		// 	newExercise: {
+		// 		title: titleExercise,
+		// 		isMultiple: isMultipleExercise,
+		// 		description: descriptionExercise,
+		// 		userId: state.exercise.userId,
+		// 	},
+		// })
 		navigate(state?.from || '/tester/exercises')
 	}
 

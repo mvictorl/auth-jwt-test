@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Link as LinkRRD, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -32,24 +32,34 @@ import {
 	RuleFolder as FolderIcon,
 	DriveFileRenameOutline as EditIcon,
 	Delete as DeleteIcon,
+	AddCard as AddCardIcon,
 } from '@mui/icons-material'
 import DeleteDialog from './DeleteDialog'
 import { IExerciseId } from '../../interfaces/IExerciseId'
 import {
+	useChangeExerciseMutation,
 	useDeleteExerciseByIDMutation,
 	useGetAllExerciseQuery,
 } from '../../store/query/testerApi'
-import { IExerciseFull } from '../../interfaces/IExerciseFull'
 import {
 	setCurrentExercise,
 	clearCurrentExercise,
 } from '../../store/slices/exerciseSlice'
+import EditExerciseDialog from './EditExerciseDialog'
 
 const ExerciseList = () => {
-	const [deleteExercise, { isSuccess, isError }] =
-		useDeleteExerciseByIDMutation()
+	const [
+		deleteExercise,
+		{ isSuccess: isDeleteSuccess, isError: isDeleteError },
+	] = useDeleteExerciseByIDMutation()
+	const [
+		changeExercise,
+		{ isSuccess: isChangeSuccess, isError: isChangeError },
+	] = useChangeExerciseMutation()
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false)
 	const [candidateToDelete, setCandidateToDelete] = useState<string>('')
+
+	const exercise = useRef({} as IExerciseId)
 
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
@@ -64,26 +74,34 @@ const ExerciseList = () => {
 		backgroundColor: theme.palette.background.paper,
 	}))
 
-	// const handleChooseExercise = (id: string) => {
-	// 	dispatch(setCurrentExercise(id))
-	// }
+	// Test Dialog Open - BEGIN
+	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+	const handleEditBtn = (e: IExerciseId) => {
+		exercise.current = e
+		setIsDialogOpen(true)
+	}
+	const handleDialogReturnOk = (newExercise: IExerciseId) => {
+		changeExercise(newExercise)
+		setIsDialogOpen(false)
+		exercise.current = {} as IExerciseId
+	}
+	const handleDialogReturnCancel = () => {
+		setIsDialogOpen(false)
+		exercise.current = {} as IExerciseId
+	}
+	// Test Dialog Open - END
 
-	const handleOnOk = () => {
+	const handleAddExercise = () => {
+		setIsDialogOpen(true)
+	}
+
+	const handleDeleteDialogOk = () => {
 		deleteExercise(candidateToDelete)
 		setDeleteDialogOpen(false)
 		setCandidateToDelete('')
 	}
-	const handleOnClose = () => {
+	const handleDeleteDialogCancel = () => {
 		setDeleteDialogOpen(false)
-	}
-
-	const handleEditBtn = (e: IExerciseId) => {
-		navigate(`/tester/exercises/edit/${e.id}`, {
-			state: {
-				from: pathname,
-				exercise: e,
-			},
-		})
 	}
 
 	const handleDeleteBtn = (id: string) => {
@@ -121,8 +139,8 @@ const ExerciseList = () => {
 		<Container maxWidth="md">
 			<DeleteDialog
 				open={deleteDialogOpen}
-				onCloseDialog={handleOnClose}
-				onOkDialog={handleOnOk}
+				onCloseDialog={handleDeleteDialogCancel}
+				onOkDialog={handleDeleteDialogOk}
 			/>
 
 			<Grid item xs={12} md={6}>
@@ -161,20 +179,31 @@ const ExerciseList = () => {
 					</Typography>
 				)}
 			</Grid>
+			{/* <Button
+				to="/tester/exercises/add"
+				state={{ from: pathname }}
+				component={LinkRRD}
+			>
+				Add Exercise
+			</Button> */}
+			{isDialogOpen ? (
+				<EditExerciseDialog
+					open={true}
+					onOkDialog={handleDialogReturnOk}
+					onCancelDialog={handleDialogReturnCancel}
+					exercise={exercise.current}
+				/>
+			) : null}
+
+			<Button
+				onClick={handleAddExercise}
+				variant="contained"
+				startIcon={<AddCardIcon />}
+				sx={{ mt: 3 }}
+			>
+				Add Exercise
+			</Button>
 		</Container>
-		// <>
-		// 	{exercises.length > 0 ? (
-		// 		<ul>
-		// 			{exercises.map((e: IExercise) => {
-		// 				return <li key={e.id}>{e.title}</li>
-		// 			})}
-		// 		</ul>
-		// 	) : loading ? (
-		// 		<p>Loading...</p>
-		// 	) : (
-		// 		<p>Empty</p>
-		// 	)}
-		// </>
 	)
 }
 

@@ -14,6 +14,7 @@ import AddExercise from './components/tester/AddExercise'
 import EditExercise from './components/tester/EditExercise'
 import Exercise from './components/tester/Exercise'
 import Question from './components/tester/Question'
+import QuestionsEdit from './components/tester/QuestionsEdit'
 
 export const Router = createBrowserRouter([
 	{
@@ -68,10 +69,10 @@ export const Router = createBrowserRouter([
 										index: true,
 										element: <Question />,
 									},
-									// {
-									// 	path: 'question/:id',
-
-									// },
+									{
+										path: 'edit',
+										element: <QuestionsEdit />,
+									},
 								],
 							},
 						],

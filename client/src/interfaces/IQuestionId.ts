@@ -1,6 +1,7 @@
 import { IAnswer } from './IAnswer'
 
-export interface IQuestion {
+export interface IQuestionId {
+	id: string
 	text: string
 	answers?: IAnswer[]
 }

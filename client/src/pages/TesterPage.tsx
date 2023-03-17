@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
 	Container,
 	Typography,
@@ -7,21 +8,29 @@ import {
 	CircularProgress,
 } from '@mui/material'
 import { Link as LinkRRD, Outlet, useLocation } from 'react-router-dom'
-import {
-	selectLoadingExercise,
-	useAppSelector,
-} from '../store/hooks/stateHooks'
+import EditExerciseDialog from '../components/tester/EditExerciseDialog'
 
 const TesterPage = () => {
-	// const loading = useAppSelector(selectLoadingExercise)
 	const { pathname } = useLocation()
+
+	// Test Dialog Open - BEGIN
+	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
+
+	const handleDialogReturnOk = (newText: string) => {
+		console.log('Dialog returned OK', newText)
+		setIsDialogOpen(false)
+	}
+	const handleDialogReturnCancel = () => {
+		console.log('Dialog returned CANCEL')
+		setIsDialogOpen(false)
+	}
+	// Test Dialog Open - END
 
 	return (
 		<Container>
 			<CssBaseline />
 			<Backdrop
 				sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
-				// open={loading}
 				open={false}
 			>
 				<CircularProgress color="inherit" />
@@ -29,13 +38,18 @@ const TesterPage = () => {
 			<Typography component="h1" variant="h4" align="center" marginBottom={5}>
 				Tester Page
 			</Typography>
-			<Button
-				to="/tester/exercises/add"
-				state={{ from: pathname }}
-				component={LinkRRD}
-			>
-				Add Exercise
+
+			<Button onClick={() => setIsDialogOpen(true)} variant="outlined">
+				Test Dialog Open
 			</Button>
+			{/* <EditExerciseDialog
+				open={isDialogOpen}
+				onOkDialog={handleDialogReturnOk}
+				onCancelDialog={handleDialogReturnCancel}
+				title="Редактирование текста вопроса"
+				initText="Question..."
+			/> */}
+
 			<Outlet />
 		</Container>
 	)

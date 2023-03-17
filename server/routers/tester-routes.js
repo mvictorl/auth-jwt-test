@@ -10,10 +10,25 @@ router.get('/tester/exercises', testerCtrl.getAllExercises)
 router.get('/tester/exercises/:id', testerCtrl.getExerciseById)
 
 router.post('/tester/exercises', testerCtrl.addExercise)
-
-router.patch('/tester/exercises', testerCtrl.changeExercise)
-
+router.patch('/tester/exercises/:id', testerCtrl.changeExercise)
 router.delete('/tester/exercises/:id', testerCtrl.deleteExercise)
+
+router.post('/tester/exercises/:eid/questions', testerCtrl.addQuestion)
+router.patch('/tester/exercises/question', testerCtrl.changeQuestion)
+router.delete('/tester/exercises/question', testerCtrl.deleteQuestion)
+
+router.post(
+	'/tester/exercises/:eid/questions/:qid/answers',
+	testerCtrl.addAnswer
+)
+router.patch(
+	'/tester/exercises/:eid/questions/:qid/answers',
+	testerCtrl.changeAnswer
+)
+router.delete(
+	'/tester/exercises/:eid/questions/:qid/answers',
+	testerCtrl.deleteAnswer
+)
 // routes.post(
 // 	'/auth/signup',
 
