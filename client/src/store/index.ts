@@ -10,7 +10,7 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 const store = configureStore({
 	reducer: {
 		auth: authSlice,
-		exercise: exerciseSlice,
+		// exercise: exerciseSlice,
 		[testerApi.reducerPath]: testerApi.reducer,
 	},
 	middleware: getDefaultMiddleware =>
