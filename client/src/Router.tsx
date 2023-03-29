@@ -10,8 +10,6 @@ import RestorePwd from './components/auth/RestorePwd'
 import PasswordRestoreCode from './pages/PasswordRestoreCode'
 import TesterPage from './pages/TesterPage'
 import ExerciseList from './components/tester/ExerciseList'
-import AddExercise from './components/tester/AddExercise'
-import EditExercise from './components/tester/EditExercise'
 import Exercise from './components/tester/Exercise'
 import Question from './components/tester/Question'
 import QuestionsEdit from './components/tester/QuestionsEdit'
@@ -53,14 +51,14 @@ export const Router = createBrowserRouter([
 								index: true,
 								element: <ExerciseList />,
 							},
-							{
-								path: 'add',
-								element: <AddExercise />,
-							},
-							{
-								path: 'edit/:id',
-								element: <EditExercise />,
-							},
+							// {
+							// 	path: 'add',
+							// 	element: <AddExercise />,
+							// },
+							// {
+							// 	path: 'edit/:id',
+							// 	element: <EditExercise />,
+							// },
 							{
 								path: ':id',
 								element: <Exercise />,

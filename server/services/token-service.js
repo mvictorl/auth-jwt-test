@@ -2,22 +2,22 @@ const dbClient = require('../prisma/dbClient')
 const jwt = require('jsonwebtoken')
 
 class TokenService {
-	async generatePairOfTokens(payload) {
+	async generatePairOfTokens(userToken) {
 		try {
 			const accessToken = await jwt.sign(
-				payload,
+				userToken,
 				process.env.JWT_ACCESS_SECRET,
 				{
 					algorithm: 'HS256',
-					expiresIn: '10s',
+					expiresIn: '30s',
 				}
 			)
 			const refreshToken = await jwt.sign(
-				payload,
+				userToken,
 				process.env.JWT_REFRESH_SECRET,
 				{
 					algorithm: 'HS256',
-					expiresIn: '30m',
+					expiresIn: '1h',
 				}
 			)
 
@@ -86,7 +86,7 @@ class TokenService {
 
 	async findToken(refreshToken) {
 		try {
-			return await dbClient.token.findUnique({
+			return await dbClient.token.findFirst({
 				where: { refresh: refreshToken },
 				select: {
 					id: true,
@@ -94,7 +94,7 @@ class TokenService {
 				},
 			})
 		} catch (e) {
-			console.error('The token lookup in DB error')
+			console.error('The refresh token lookup in DB error', e)
 			return null
 			// throw ApiError.DataBaseError('DB Error', e)
 		}
@@ -111,7 +111,12 @@ class TokenService {
 
 	async validateRefreshToken(refreshToken) {
 		try {
-			return await jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
+			const verify = await jwt.verify(
+				refreshToken,
+				process.env.JWT_REFRESH_SECRET
+			)
+			console.log('Verify:', verify)
+			return verify
 		} catch (e) {
 			console.error('The refresh token validating error')
 			return null

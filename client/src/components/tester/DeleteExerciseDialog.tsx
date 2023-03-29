@@ -14,7 +14,7 @@ type DeleteDialogProps = {
 	onCloseDialog: () => void
 }
 
-const DeleteDialog = ({
+const DeleteExerciseDialog = ({
 	open,
 	onOkDialog,
 	onCloseDialog,
@@ -37,12 +37,11 @@ const DeleteDialog = ({
 			aria-describedby="alert-dialog-description"
 		>
 			<DialogTitle id="alert-dialog-title">
-				{"Use Google's location service?"}
+				Подтверждение удаления теста
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText id="alert-dialog-description">
-					Let Google help apps determine location. This means sending anonymous
-					location data to Google, even when no apps are running.
+					Вы подтвержаете удаление теста?
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
@@ -55,4 +54,4 @@ const DeleteDialog = ({
 	)
 }
 
-export default DeleteDialog
+export default DeleteExerciseDialog

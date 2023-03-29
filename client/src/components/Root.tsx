@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import {
 	Backdrop,
@@ -8,11 +9,24 @@ import {
 } from '@mui/material'
 import Copyright from './Copyright'
 import AppBar from './AppBar'
-import { selectLoading, useAppSelector } from '../store/hooks/stateHooks'
+import {
+	selectIsAuth,
+	selectLoading,
+	useAppDispatch,
+	useAppSelector,
+} from '../store/hooks/stateHooks'
 import CircularProgress from '@mui/material/CircularProgress'
+import { check, startup } from '../store/actions/authActions'
 
 const Root = () => {
+	const dispatch = useAppDispatch()
+	const isAuth = useAppSelector(selectIsAuth)
 	const loading = useAppSelector(selectLoading)
+
+	// useEffect(() => {
+	// 	if (!isAuth && localStorage.getItem('bearer-token')) dispatch(startup())
+	// }, [])
+
 	return (
 		<Box
 			sx={{

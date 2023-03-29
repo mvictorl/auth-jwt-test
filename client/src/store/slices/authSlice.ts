@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { IRootState } from '..'
 import { IUser } from '../../interfaces/IUser'
 import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
-import { login, logout, register } from '../actions/authActions'
+import { check, login, logout, register, startup } from '../actions/authActions'
 
 // Initial Auth State
 const initialState = {
@@ -21,8 +21,33 @@ const authSlice = createSlice({
 		clearError: state => {
 			state.errors = []
 		},
+		// clearAuth: state => {
+		// 	state = initialState
+		// },
 	},
 	extraReducers(builder) {
+		// === Startup ====
+		builder.addCase(startup.pending, state => {
+			console.log('Startup pending')
+			state.loading = true
+			state.errors = []
+		})
+		builder.addCase(startup.fulfilled, (state, action) => {
+			console.log('Startup fulfilled')
+			state.loading = false
+			state.success = true
+			state.currentUser = action.payload.currentUser
+			state.isAuth = true
+		})
+		builder.addCase(startup.rejected, (state, action) => {
+			console.log('Startup rejected')
+			state.loading = false
+			state.errors = action.payload as IValidationErrorResponse[]
+			state.isAuth = false
+			localStorage.clear()
+			state.currentUser = {} as IUser
+		})
+
 		// === Registration ====
 		builder.addCase(register.pending, state => {
 			console.log('Register pending')
@@ -84,6 +109,26 @@ const authSlice = createSlice({
 			state.errors = [] as IValidationErrorResponse[]
 			state.currentUser = {} as IUser
 			state.isAuth = false
+		})
+		// === Check ====
+		builder.addCase(check.pending, state => {
+			console.log('Check pending')
+			state.loading = true
+			state.errors = []
+		})
+		builder.addCase(check.fulfilled, (state, action) => {
+			console.log('Check fulfilled')
+			state.success = true
+			state.currentUser = action.payload.currentUser
+			state.isAuth = true
+			state.loading = false
+		})
+		builder.addCase(check.rejected, (state, action) => {
+			console.log('Check rejected', state.errors)
+			state.isAuth = false
+			state.currentUser = {} as IUser
+			state.errors = action.payload as IValidationErrorResponse[]
+			state.loading = false
 		})
 	},
 })

@@ -120,11 +120,13 @@ class AuthService {
 							])
 						}
 
-						const userDto = new TokenUserDTO(user)
+						const userTokenDto = new TokenUserDTO(user)
 
-						const tokens = await tokenSrv.generatePairOfTokens({ ...userDto })
+						const tokens = await tokenSrv.generatePairOfTokens({
+							...userTokenDto,
+						})
 						const savedToken = await tokenSrv.saveRefreshToken(
-							userDto.id,
+							userTokenDto.id,
 							tokens.refreshToken
 						)
 						if (!savedToken) {
@@ -160,6 +162,100 @@ class AuthService {
 		} catch (e) {
 			console.error('Signin server error', e)
 			throw new ApiError.ServerError('Signout server error', e)
+		}
+	}
+
+	async refresh(refreshToken) {
+		const userData = await tokenSrv.validateRefreshToken(refreshToken)
+		if (!userData) throw ApiError.UnauthorizedUserError()
+
+		const dbRefreshToken = await tokenSrv.findToken(refreshToken)
+		if (!dbRefreshToken) throw ApiError.UnauthorizedUserError()
+
+		try {
+			return await dbClient.user
+				.findUniqueOrThrow({
+					where: { id: userData.id },
+					select: {
+						id: true,
+						username: true,
+						firstName: true,
+						lastName: true,
+						roles: true,
+						isActivated: true,
+					},
+				})
+				.then(
+					async dbUser => {
+						const userTokenDto = new TokenUserDTO(dbUser)
+
+						const tokens = await tokenSrv.generatePairOfTokens({
+							...userTokenDto,
+						})
+						const savedToken = await tokenSrv.saveRefreshToken(
+							userTokenDto.id,
+							tokens.refreshToken
+						)
+						if (!savedToken) {
+							throw new apiError.ServerError('Refresh server error')
+						}
+
+						return { tokens, user: dbUser }
+					},
+					err => {
+						console.error('DB Error 1')
+						throw ApiError.ServerError('DB Error', err)
+					}
+				)
+		} catch (e) {
+			console.error('DB Error 2')
+			throw ApiError.ServerError('DB Error', e)
+		}
+	}
+
+	async check(refreshToken) {
+		if (!refreshToken) return null
+
+		const userData = await tokenSrv.validateRefreshToken(refreshToken)
+		if (!userData) return null
+
+		const tokenFromDb = await tokenSrv.findToken(refreshToken)
+		if (!tokenFromDb) return null
+
+		try {
+			console.log('User Data:', userData)
+			return await dbClient.user
+				.findUnique({
+					where: { id: userData.id },
+					select: {
+						id: true,
+						email: true,
+						username: true,
+						roles: true,
+						isActivated: true,
+					},
+				})
+				.then(
+					async user => {
+						const tokens = tokenSrv.generatePairOfTokens({ ...user })
+						await tokenSrv.saveRefreshToken(user.id, tokens.refreshToken)
+
+						return { tokens, user }
+					},
+					err => {
+						console.error('DataBase error', err)
+						throw ApiError.DataBaseError('DB Error', err)
+					}
+				)
+		} catch (e) {
+			if (e.status === 422) {
+				throw ApiError.ValidationError(e.message, e.errors)
+			} else {
+				console.error('Signin server error', e)
+				throw new ApiError.ServerError('Signup server error', e)
+			}
+			// console.error('DB Error')
+			// throw ApiError.DataBaseError('DB Error', e)
 		}
 	}
 
@@ -224,58 +320,6 @@ class AuthService {
 			} else {
 				throw new apiError.ServerError('Validation server error', e)
 			}
-		}
-	}
-
-	async refresh(refreshToken) {
-		if (!refreshToken) {
-			throw ApiError.UnauthorizedUserError()
-		}
-
-		const userData = await tokenSrv.validateRefreshToken(refreshToken)
-
-		const dbRefreshToken = await tokenSrv.findToken(refreshToken)
-
-		if (!userData || !dbRefreshToken) {
-			throw ApiError.UnauthorizedUserError()
-		}
-
-		try {
-			return await dbClient.user
-				.findUniqueOrThrow({
-					where: { id: userData.id },
-					select: {
-						id: true,
-						name: true,
-						firstName: true,
-						lastName: true,
-						roles: true,
-						isActivated: true,
-					},
-				})
-				.then(
-					async dbUser => {
-						const userDto = new TokenUserDTO(dbUser)
-
-						const tokens = await tokenSrv.generatePairOfTokens({ ...userDto })
-						const savedToken = await tokenSrv.saveRefreshToken(
-							userDto.id,
-							tokens.refreshToken
-						)
-						if (!savedToken) {
-							throw new apiError.ServerError('Refresh server error')
-						}
-
-						return { tokens, user: dbUser }
-					},
-					err => {
-						console.error('DB Error')
-						throw ApiError.ServerError('DB Error', err)
-					}
-				)
-		} catch (e) {
-			console.error('DB Error')
-			throw ApiError.ServerError('DB Error', e)
 		}
 	}
 
@@ -452,8 +496,6 @@ class AuthService {
 			}
 		}
 	}
-
-	async check(refreshToken) {}
 }
 
 module.exports = authSrv = new AuthService()

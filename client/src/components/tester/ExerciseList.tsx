@@ -18,6 +18,10 @@ import {
 	Box,
 	Button,
 	Container,
+	Dialog,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Grid,
 	IconButton,
 	Link,
@@ -25,6 +29,7 @@ import {
 	ListItem,
 	ListItemAvatar,
 	ListItemText,
+	TextField,
 	Tooltip,
 	Typography,
 } from '@mui/material'
@@ -34,9 +39,10 @@ import {
 	Delete as DeleteIcon,
 	AddCard as AddCardIcon,
 } from '@mui/icons-material'
-import DeleteDialog from './DeleteDialog'
+import DeleteExerciseDialog from './DeleteExerciseDialog'
 import { IExerciseId } from '../../interfaces/IExerciseId'
 import {
+	useAddNewExerciseMutation,
 	useChangeExerciseMutation,
 	useDeleteExerciseByIDMutation,
 	useGetAllExerciseQuery,
@@ -45,9 +51,13 @@ import {
 	setCurrentExercise,
 	clearCurrentExercise,
 } from '../../store/slices/exerciseSlice'
+import AddExerciseDialog from './AddExerciseDialog'
+import { IExercise } from '../../interfaces/IExercise'
 import EditExerciseDialog from './EditExerciseDialog'
 
 const ExerciseList = () => {
+	const [addExercise, { isSuccess: isAddSuccess, isError: isAddError }] =
+		useAddNewExerciseMutation()
 	const [
 		deleteExercise,
 		{ isSuccess: isDeleteSuccess, isError: isDeleteError },
@@ -56,10 +66,14 @@ const ExerciseList = () => {
 		changeExercise,
 		{ isSuccess: isChangeSuccess, isError: isChangeError },
 	] = useChangeExerciseMutation()
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false)
-	const [candidateToDelete, setCandidateToDelete] = useState<string>('')
 
-	const exercise = useRef({} as IExerciseId)
+	type ExerciseType = {
+		title: string
+		description: string
+		isMultiple: boolean
+	}
+
+	const exercise = useRef({} as ExerciseType)
 
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
@@ -74,40 +88,61 @@ const ExerciseList = () => {
 		backgroundColor: theme.palette.background.paper,
 	}))
 
-	// Test Dialog Open - BEGIN
-	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
-	const handleEditBtn = (e: IExerciseId) => {
-		exercise.current = e
-		setIsDialogOpen(true)
-	}
-	const handleDialogReturnOk = (newExercise: IExerciseId) => {
-		changeExercise(newExercise)
-		setIsDialogOpen(false)
-		exercise.current = {} as IExerciseId
-	}
-	const handleDialogReturnCancel = () => {
-		setIsDialogOpen(false)
-		exercise.current = {} as IExerciseId
-	}
-	// Test Dialog Open - END
+	// ===== Add Dialog Open - BEGIN
+	const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false)
 
 	const handleAddExercise = () => {
-		setIsDialogOpen(true)
+		setIsAddDialogOpen(true)
 	}
 
-	const handleDeleteDialogOk = () => {
-		deleteExercise(candidateToDelete)
-		setDeleteDialogOpen(false)
-		setCandidateToDelete('')
+	const handleAddDialogOk = (newExercise: {
+		title: string
+		description: string
+		isMultiple: boolean
+	}) => {
+		addExercise({ ...newExercise, userId: currentUser.id })
+		setIsAddDialogOpen(false)
 	}
+	const handleAddDialogCancel = () => {
+		setIsAddDialogOpen(false)
+	}
+	// ===== Add Dialog Open - END
+
+	// ===== Edit Dialog Open - BEGIN
+	const [isEditDialogOpen, setIsEditDialogOpen] = useState<IExerciseId | false>(
+		false
+	)
+
+	const handleEditDialogOk = (newExercise: {
+		id: string
+		title: string
+		description: string
+		isMultiple: boolean
+	}) => {
+		changeExercise({ ...newExercise, userId: currentUser.id })
+		setIsEditDialogOpen(false)
+	}
+	const handleEditDialogCancel = () => {
+		setIsEditDialogOpen(false)
+	}
+	// ===== Edit Dialog Open - END
+
+	// ===== Delete Dialog Open - BEGIN
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState<string | false>(
+		false
+	)
+
+	const handleDeleteDialogOk = () => {
+		if (typeof deleteDialogOpen === 'string') {
+			deleteExercise(deleteDialogOpen)
+		}
+		setDeleteDialogOpen(false)
+	}
+
 	const handleDeleteDialogCancel = () => {
 		setDeleteDialogOpen(false)
 	}
-
-	const handleDeleteBtn = (id: string) => {
-		setCandidateToDelete(id)
-		setDeleteDialogOpen(true)
-	}
+	// ===== Delete Dialog Open - END
 
 	const viewOwnerButtons = (e: IExerciseId) => {
 		if (
@@ -117,14 +152,17 @@ const ExerciseList = () => {
 			return (
 				<Box>
 					<Tooltip title="Edit">
-						<IconButton onClick={() => handleEditBtn(e)} aria-label="edit">
+						<IconButton
+							onClick={() => setIsEditDialogOpen(e)}
+							aria-label="edit"
+						>
 							<EditIcon />
 						</IconButton>
 					</Tooltip>
 
 					<Tooltip title="Delete">
 						<IconButton
-							onClick={() => handleDeleteBtn(e.id)}
+							onClick={() => setDeleteDialogOpen(e.id)}
 							aria-label="delete"
 						>
 							<DeleteIcon />
@@ -137,15 +175,28 @@ const ExerciseList = () => {
 
 	return (
 		<Container maxWidth="md">
-			<DeleteDialog
-				open={deleteDialogOpen}
+			<AddExerciseDialog
+				open={isAddDialogOpen}
+				onOkDialog={handleAddDialogOk}
+				onCancelDialog={handleAddDialogCancel}
+			/>
+
+			<EditExerciseDialog
+				open={!!isEditDialogOpen}
+				onOkDialog={handleEditDialogOk}
+				onCancelDialog={handleEditDialogCancel}
+				exercise={isEditDialogOpen ? isEditDialogOpen : undefined}
+			/>
+
+			<DeleteExerciseDialog
+				open={!!deleteDialogOpen}
 				onCloseDialog={handleDeleteDialogCancel}
 				onOkDialog={handleDeleteDialogOk}
 			/>
 
 			<Grid item xs={12} md={6}>
 				{data && data.length > 0 ? (
-					<>
+					<Box>
 						<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
 							Список тестов:
 						</Typography>
@@ -172,7 +223,7 @@ const ExerciseList = () => {
 								))}
 							</List>
 						</StyledDiv>
-					</>
+					</Box>
 				) : (
 					<Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
 						No ready tests
@@ -186,14 +237,6 @@ const ExerciseList = () => {
 			>
 				Add Exercise
 			</Button> */}
-			{isDialogOpen ? (
-				<EditExerciseDialog
-					open={true}
-					onOkDialog={handleDialogReturnOk}
-					onCancelDialog={handleDialogReturnCancel}
-					exercise={exercise.current}
-				/>
-			) : null}
 
 			<Button
 				onClick={handleAddExercise}

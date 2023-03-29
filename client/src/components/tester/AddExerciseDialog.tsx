@@ -6,46 +6,46 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
-	DialogContentText,
 	DialogTitle,
 	FormControlLabel,
 	TextField,
 } from '@mui/material'
 import { IExerciseId } from '../../interfaces/IExerciseId'
+import { IExercise } from '../../interfaces/IExercise'
 
-type EditDialogProps = {
+type AddDialogProps = {
 	open: boolean
 	onOkDialog: (e: {
-		id: string
 		title: string
 		description: string
 		isMultiple: boolean
 	}) => void
 	onCancelDialog: () => void
-	exercise?: IExerciseId
 }
 
-const EditExerciseDialog = ({
+const AddExerciseDialog = ({
 	open,
 	onOkDialog,
 	onCancelDialog,
-	exercise,
-}: EditDialogProps) => {
+}: AddDialogProps) => {
 	const [title, setTitle] = useState<string>('')
 	const [description, setDescription] = useState<string>('')
 	const [isMultiple, setIsMultiple] = useState<boolean>(false)
 
+	// const handleEditOk = () => {
+	// 	props.onOkDialog({
+	// 		id: props.exercise.id,
+	// 		title: props.exercise?.title,
+	// 		description: props.exercise?.description,
+	// 		isMultiple: props.exercise?.isMultiple,
+	// 	})
+	// }
 	const handleCreateOk = () => {
-		if (exercise) {
-			onOkDialog({
-				id: exercise.id,
-				title,
-				description,
-				isMultiple,
-			})
-		} else {
-			onCancelDialog()
-		}
+		onOkDialog({
+			title,
+			description,
+			isMultiple,
+		})
 	}
 
 	const handleCancel = () => {
@@ -53,17 +53,12 @@ const EditExerciseDialog = ({
 	}
 
 	useEffect(() => {
-		if (open && exercise) {
-			setTitle(exercise.title)
-			setDescription(exercise.description)
-			setIsMultiple(exercise.isMultiple)
-		}
 		return () => {
 			setTitle('')
 			setDescription('')
 			setIsMultiple(false)
 		}
-	}, [open])
+	}, [])
 
 	return (
 		<Dialog
@@ -127,4 +122,4 @@ const EditExerciseDialog = ({
 	)
 }
 
-export default EditExerciseDialog
+export default AddExerciseDialog

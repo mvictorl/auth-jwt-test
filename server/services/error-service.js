@@ -5,14 +5,13 @@ module.exports = class ApiError extends Error {
 		this.errors = errors
 	}
 
-	static UnauthorizedUserError() {
-		return new ApiError(403, 'User is not authorized')
-	}
-
+	// Redirection statuses
 	static AlreadyExistUserError() {
 		return new ApiError(303, 'User already exist')
+		// return new ApiError(409, 'User already exist') // Conflict
 	}
 
+	// Client error statuses
 	static AuthHeaderError() {
 		return new ApiError(401, 'User is not authorized (no Auth Header)')
 	}
@@ -28,8 +27,20 @@ module.exports = class ApiError extends Error {
 		)
 	}
 
+	static ActivationError() {
+		return new ApiError(401, 'Activation error has occurred')
+	}
+
+	static UnauthorizedUserError() {
+		return new ApiError(401, 'User is not authorized')
+	}
+
 	static RefreshTokenError() {
-		return new ApiError(403, 'Wrong Refresh Token (cookie)')
+		return new ApiError(401, 'Wrong Refresh Token (cookie)')
+	}
+
+	static PermissionError() {
+		return new ApiError(403, 'User has no permissions')
 	}
 
 	static BadRequest(message) {
@@ -40,14 +51,7 @@ module.exports = class ApiError extends Error {
 		return new ApiError(422, message, errors)
 	}
 
-	static PermissionError() {
-		return new ApiError(401, 'User has no permissions')
-	}
-
-	static ActivationError() {
-		return new ApiError(401, 'Activation error has occurred')
-	}
-
+	// Server error statuses
 	static ServerError(message, error = []) {
 		return new ApiError(500, message, error)
 	}

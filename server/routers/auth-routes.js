@@ -2,7 +2,12 @@ const Router = require('express').Router
 const router = new Router()
 
 const { body, param } = require('express-validator')
+const authMiddleware = require('../middlewares/auth-middleware')
 const authCtrl = require('../controllers/auth-controller')
+
+router.get('/auth', authMiddleware, (req, res, next) => {
+	return res.status(200)
+})
 
 router.post(
 	'/auth/signup',
@@ -76,7 +81,9 @@ router.post(
 	authCtrl.signin
 )
 
-router.get('/auth/signout', authCtrl.signout)
+router.get('/auth/signout', authMiddleware, authCtrl.signout)
+
+router.get('/auth/refresh', authCtrl.refresh)
 
 router.get('/auth/check', authCtrl.check)
 
@@ -110,7 +117,5 @@ router.patch(
 	param('code').isUUID().withMessage('Incorrect the Restore password link'),
 	authCtrl.passwordRestoreLinkCheck
 )
-
-router.get('/auth/refresh', authCtrl.refresh)
 
 module.exports = router

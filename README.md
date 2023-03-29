@@ -11,8 +11,9 @@
 5.  **cookie-parser**
 6.  **bcryptjs**
 7.  **dotenv**
-8.  **nodemon** (Dev)
-9.  **prisma** (Dev)
+8.  **uuid**
+9.  **nodemon** (Dev)
+10. **prisma** (Dev)
 
     1. `npm i prisma -D`
     2. `npx prisma init` (`set NODE_TLS_REJECT_UNAUTHORIZED=0` for resolve "unable to verify the first certificate" error)
@@ -37,9 +38,9 @@
        3. `npx prisma db seed`
           > Maybe need add `"type": "module"` in the `pakage.json` file for use import into `seed.js` file
 
-10.
+11.
 
-11. Create `server.js` file
+12. Create `server.js` file
 
 ## Client side
 
@@ -52,6 +53,7 @@
       `npm i axios`
 
    3. **MUI**
+
       1. `npm install @mui/material @emotion/react @emotion/styled`
       2. `npm install @fontsource/roboto`
       3. add to `main.tsx` file

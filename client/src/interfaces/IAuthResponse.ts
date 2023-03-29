@@ -3,7 +3,7 @@ import { IValidationErrorResponse } from './IValidationErrorResponse'
 
 export interface IAuthResponse {
 	accessToken: string
-	refreshToken: string
+	// refreshToken: string
 	user: IUser
 	errors?: IValidationErrorResponse[]
 }

@@ -2,31 +2,50 @@ const Router = require('express').Router
 const router = new Router()
 
 const testerCtrl = require('../controllers/tester-controller')
-
+const authMiddleware = require('../middlewares/auth-middleware')
 const { body, param } = require('express-validator')
 
 router.get('/tester/exercises', testerCtrl.getAllExercises)
 
 router.get('/tester/exercises/:id', testerCtrl.getExerciseById)
 
-router.post('/tester/exercises', testerCtrl.addExercise)
-router.patch('/tester/exercises/:id', testerCtrl.changeExercise)
-router.delete('/tester/exercises/:id', testerCtrl.deleteExercise)
+router.post('/tester/exercises', authMiddleware, testerCtrl.addExercise)
+router.patch('/tester/exercises/:id', authMiddleware, testerCtrl.changeExercise)
+router.delete(
+	'/tester/exercises/:id',
+	authMiddleware,
+	testerCtrl.deleteExercise
+)
 
-router.post('/tester/exercises/:eid/questions', testerCtrl.addQuestion)
-router.patch('/tester/exercises/question', testerCtrl.changeQuestion)
-router.delete('/tester/exercises/question', testerCtrl.deleteQuestion)
+router.post(
+	'/tester/exercises/:eid/questions',
+	authMiddleware,
+	testerCtrl.addQuestion
+)
+router.patch(
+	'/tester/exercises/question',
+	authMiddleware,
+	testerCtrl.changeQuestion
+)
+router.delete(
+	'/tester/exercises/question',
+	authMiddleware,
+	testerCtrl.deleteQuestion
+)
 
 router.post(
 	'/tester/exercises/:eid/questions/:qid/answers',
+	authMiddleware,
 	testerCtrl.addAnswer
 )
 router.patch(
 	'/tester/exercises/:eid/questions/:qid/answers',
+	authMiddleware,
 	testerCtrl.changeAnswer
 )
 router.delete(
 	'/tester/exercises/:eid/questions/:qid/answers',
+	authMiddleware,
 	testerCtrl.deleteAnswer
 )
 // routes.post(

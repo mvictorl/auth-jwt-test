@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import {
 	addExercise,
 	changeExercises,
@@ -30,4 +30,5 @@ const exerciseSlice = createSlice({
 
 export const { setCurrentExercise, clearCurrentExercise } =
 	exerciseSlice.actions
+
 export default exerciseSlice.reducer

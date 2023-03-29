@@ -1,6 +1,24 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { AuthService } from '../../service/auth-service'
 
+export const startup = createAsyncThunk(
+	'auth/startup',
+	async (_, { rejectWithValue }) => {
+		try {
+			const data = await AuthService.startup()
+			if (!data.user || !data.accessToken) throw Error('Server error on Login')
+			else {
+				return { currentUser: data.user }
+			}
+		} catch (error: any) {
+			if (error.response && error.response.data.errors) {
+				return rejectWithValue(error.response.data.errors)
+			}
+			return rejectWithValue(error)
+		}
+	}
+)
+
 type registerProps = {
 	username: string
 	email: string
@@ -73,8 +91,39 @@ export const logout = createAsyncThunk(
 	async ({}, { rejectWithValue }) => {
 		try {
 			return await AuthService.logout()
-		} catch (error) {
+		} catch (error: any) {
 			return rejectWithValue(error)
+		}
+	}
+)
+
+export const check = createAsyncThunk(
+	'auth/check',
+	async (_, { dispatch, rejectWithValue }) => {
+		try {
+			const data = await AuthService.check()
+			console.log('Check:', data)
+
+			if (!data.user || !data.accessToken) {
+				localStorage.removeItem('bearer-token')
+				throw Error('Server error on Check')
+			} else {
+				localStorage.setItem('bearer-token', data.accessToken)
+				return { currentUser: data.user }
+			}
+		} catch (error: any) {
+			if (error.response && error.response.data.errors) {
+				return rejectWithValue(error.response.data.errors)
+			}
+			return rejectWithValue(error)
+			// const message =
+			// 	(error.response &&
+			// 		error.response.data &&
+			// 		error.response.data.message) ||
+			// 	error.message ||
+			// 	error.toString()
+			// dispatch(setMessage(message))
+			// return { currentUser: initialState.currentUser }
 		}
 	}
 )

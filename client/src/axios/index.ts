@@ -13,7 +13,7 @@ export const $api = axios.create({
 $api.interceptors.request.use(config => {
 	axios.defaults.headers.common[
 		'Authorization'
-	] = `Bearer ${localStorage.getItem('accessToken')}`
+	] = `Bearer ${localStorage.getItem('bearer-token')}`
 	return config
 })
 
@@ -24,19 +24,21 @@ $api.interceptors.response.use(
 		if (err.response.status === 401 && origRequest && !origRequest._isRetry) {
 			origRequest._isRetry = true
 			try {
-				const res = await axios.get<IAuthResponse>(`${API_URL}/user/refresh`, {
+				const res = await axios.get<IAuthResponse>(`${API_URL}/auth/refresh`, {
 					withCredentials: true,
 				})
+				console.log('Res:', res)
+
 				if (res.data.accessToken) {
-					localStorage.setItem('accessToken', res.data.accessToken)
+					localStorage.setItem('bearer-token', res.data.accessToken)
 					return $api(origRequest)
 				} else {
-					localStorage.removeItem('accessToken')
+					localStorage.removeItem('bearer-token')
 				}
 				return $api(origRequest)
 			} catch (e) {
 				console.error('USER NOT AUTHORIZE', e)
-				localStorage.removeItem('accessToken')
+				localStorage.removeItem('bearer-token')
 			}
 		}
 		localStorage.removeItem('bearer-token')

@@ -1,6 +1,11 @@
 import { $api } from '../axios'
 import { IAuthResponse } from '../interfaces/IAuthResponse'
 
+async function startup(): Promise<IAuthResponse> {
+	const response = await $api.get('/auth')
+	return response.data
+}
+
 async function register(
 	username: string,
 	email: string,
@@ -39,6 +44,15 @@ async function logout(): Promise<IAuthResponse> {
 	return response.data
 }
 
+async function check(): Promise<IAuthResponse> {
+	console.log('Start /auth/check request')
+
+	const response = await $api.get('/auth/refresh')
+	console.log('Response:', response)
+
+	return response.data
+}
+
 async function activate(code: string): Promise<IAuthResponse> {
 	const response = await $api.patch(`/auth/activation/${code}`)
 	return response.data
@@ -62,17 +76,13 @@ async function tryRestore(code: string): Promise<IAuthResponse> {
 	return response.data
 }
 
-// async function check(): Promise<IAuthResponse> {
-//   const response = await $api.get('/user/check')
-//   return response.data
-// }
-
 export const AuthService = {
+	startup,
 	register,
 	login,
 	logout,
 	activate,
 	askRestore,
 	tryRestore,
-	// check,
+	check,
 }
