@@ -1,5 +1,7 @@
-const ErrorPage = () => {
-  return <h1 className="error-header">Error occured</h1>
+import React from 'react'
+
+function ErrorPage() {
+	return <h2 style={{ color: 'red' }}>Error Page</h2>
 }
 
 export default ErrorPage

@@ -3,7 +3,7 @@ import { Router } from './Router'
 import './App.css'
 
 function App() {
-	return <RouterProvider router={Router}></RouterProvider>
+	return <RouterProvider router={Router} />
 }
 
 export default App

@@ -1,67 +1,83 @@
-import { useState, useEffect } from 'react'
-import { Link as LinkRRD, useNavigate, useLocation } from 'react-router-dom'
+import { useState, useEffect, FormEvent } from 'react'
+import { useNavigate, useLocation, Link as LinkRRD } from 'react-router-dom'
+// @mui
 import {
-	Avatar,
-	Button,
-	Box,
-	Checkbox,
-	CssBaseline,
 	Container,
-	Grid,
-	FormControlLabel,
+	Link,
+	Stack,
 	IconButton,
 	InputAdornment,
-	Link,
 	TextField,
+	Checkbox,
+	FormControlLabel,
+	Box,
 	Typography,
+	Avatar,
+	Grid,
 } from '@mui/material'
+import LoadingButton from '@mui/lab/LoadingButton'
+// @mui/icons-material
+import LockOpenIcon from '@mui/icons-material/LockOpenOutlined'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+// Auth Logic
 import {
-	LockOutlined as LockOutlinedIcon,
-	Visibility,
-	VisibilityOff,
-} from '@mui/icons-material'
-import Copyright from '../Copyright'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { login } from '../../store/actions/authActions'
-import {
-	selectErrors,
-	selectIsAuth,
+	selectAuthErrors,
+	selectAuthIsAuth,
+	selectAuthLoading,
+	selectAuthSuccess,
 	useAppDispatch,
 	useAppSelector,
-} from '../../store/hooks/stateHooks'
-import { clearError } from '../../store/slices/authSlice'
+} from '../../store/hooks'
+import { login } from '../../store/thunks/auth-thunk'
+import { clearError, clearSuccess } from '../../store/slices/auth-slice'
 import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
 
-const theme = createTheme()
+import { useSnackbar } from 'notistack'
+import ReportComplete from '../Snackbar/MySuccess'
 
-function SignIn() {
+// ----------------------------------------------------------------------
+
+const SignIn = () => {
 	const dispatch = useAppDispatch()
-	const isAuth = useAppSelector(selectIsAuth)
-	const errors = useAppSelector(selectErrors)
+	const isAuth = useAppSelector(selectAuthIsAuth)
+	const isLoading = useAppSelector(selectAuthLoading)
+	const errors = useAppSelector(selectAuthErrors)
+	const isSuccess = useAppSelector(selectAuthSuccess)
 
 	const { state, pathname } = useLocation()
 	const navigate = useNavigate()
 
-	const [username, setUsername] = useState<string>('')
-	const [usernameError, setUsernameError] = useState<string>(' ')
+	const [showPassword, setShowPassword] = useState(false)
+
+	const [nickname, setNickname] = useState<string>('')
+	const [nicknameError, setNicknameError] = useState<string>(' ')
 	const [password, setPassword] = useState<string>('')
 	const [passwordError, setPasswordError] = useState<string>(' ')
 	const [remember, setRemember] = useState<boolean>(false)
-	const [passwordShow, setPasswordShow] = useState<boolean>(false)
+
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
 	useEffect(() => {
 		if (isAuth) {
-			navigate(state?.from || '/')
+			navigate(state?.from || '/', { replace: true })
 		}
 	}, [isAuth])
+
+	useEffect(() => {
+		if (isSuccess) {
+			enqueueSnackbar('Secceful authorization!', { variant: 'reportComplete' })
+			dispatch(clearSuccess())
+		}
+	}, [isSuccess])
 
 	useEffect(() => {
 		if (errors.length > 0) {
 			errors.forEach((e: IValidationErrorResponse) => {
 				switch (e.param) {
 					case 'username':
-						setUsernameError(e.msg)
-						setUsername(e.value)
+						setNicknameError(e.msg)
+						setNickname(e.value)
 						break
 					case 'password':
 						setPasswordError(e.msg)
@@ -73,124 +89,126 @@ function SignIn() {
 		}
 	}, [errors])
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		dispatch(login({ username, password, remember }))
+		dispatch(login({ username: nickname, password, remember }))
 	}
 
 	return (
-		<ThemeProvider theme={theme}>
-			<Container component="main" maxWidth="xs">
-				<CssBaseline />
-				<Box
-					sx={{
-						marginTop: 4,
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-					}}
-				>
-					<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						Sign in
-					</Typography>
+		<Container maxWidth="xs" sx={{ mt: 5 }}>
+			<Box component="form" onSubmit={handleSubmit} noValidate>
+				<Stack>
 					<Box
-						component="form"
-						onSubmit={handleSubmit}
-						noValidate
-						sx={{ mt: 1 }}
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							flexDirection: 'column',
+						}}
 					>
-						<TextField
-							onChange={e => setUsername(e.target.value)}
-							onFocus={() => setUsernameError(' ')}
-							value={username}
-							margin="normal"
-							required
-							fullWidth
-							id="username"
-							label="User Name"
-							name="username"
-							autoComplete="username"
-							error={usernameError !== ' '}
-							helperText={usernameError || ' '}
-							autoFocus
-						/>
-						<TextField
-							onChange={e => setPassword(e.target.value)}
-							onFocus={() => setPasswordError(' ')}
-							value={password}
-							margin="normal"
-							required
-							fullWidth
-							name="password"
-							label="Password"
-							type={passwordShow ? 'text' : 'password'}
-							id="password"
-							autoComplete="current-password"
-							error={passwordError !== ' '}
-							helperText={passwordError || ' '}
-							InputProps={{
-								endAdornment: (
-									<InputAdornment position="end">
-										<IconButton
-											aria-label="toggle password visibility"
-											onClick={() => setPasswordShow(!passwordShow)}
-											edge="end"
-										>
-											{passwordShow ? <VisibilityOff /> : <Visibility />}
-										</IconButton>
-									</InputAdornment>
-								),
-							}}
-						/>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={remember}
-									onChange={() => setRemember(!remember)}
-									name="remember"
-									color="primary"
-								/>
-							}
-							label="Remember me"
-						/>
-						<Button
-							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{ mt: 3, mb: 2 }}
-						>
+						<Avatar variant="rounded" sx={{ m: 1, bgcolor: 'success.main' }}>
+							<LockOpenIcon fontSize="large" />
+						</Avatar>
+						<Typography variant="h3" sx={{ my: 2 }}>
 							Sign In
-						</Button>
-						<Grid container>
-							<Grid item xs>
-								<Link
-									to="/restore"
-									state={{ from: pathname }}
-									component={LinkRRD}
-									variant="body2"
-								>
-									Forgot password?
-								</Link>
-							</Grid>
-							<Grid item>
-								<Link
-									to="/signup"
-									state={{ from: pathname }}
-									component={LinkRRD}
-									variant="body2"
-								>
-									{"Don't have an account? Sign Up"}
-								</Link>
-							</Grid>
-						</Grid>
+						</Typography>
 					</Box>
-				</Box>
-				<Copyright sx={{ mt: 8, mb: 4 }} />
-			</Container>
-		</ThemeProvider>
+
+					<TextField
+						value={nickname}
+						required
+						onChange={e => setNickname(e.target.value)}
+						onFocus={() => setNicknameError(' ')}
+						name="nickname"
+						label="Nick name"
+						fullWidth
+						margin="dense"
+						autoComplete="nickame"
+						error={nicknameError !== ' '}
+						helperText={nicknameError || ' '}
+					/>
+
+					<TextField
+						value={password}
+						required
+						onChange={e => setPassword(e.target.value)}
+						onFocus={() => setPasswordError(' ')}
+						name="password"
+						label="Password"
+						type={showPassword ? 'text' : 'password'}
+						fullWidth
+						margin="dense"
+						autoComplete="password"
+						error={passwordError !== ' '}
+						helperText={passwordError || ' '}
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position="end">
+									<IconButton
+										onClick={() => setShowPassword(!showPassword)}
+										edge="end"
+									>
+										{showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+									</IconButton>
+								</InputAdornment>
+							),
+						}}
+					/>
+				</Stack>
+
+				<Stack
+					direction="row"
+					alignItems="center"
+					justifyContent="space-between"
+					sx={{ mb: 2 }}
+				>
+					<FormControlLabel
+						label="Remember me"
+						control={
+							<Checkbox
+								name="remember"
+								checked={remember}
+								onChange={() => setRemember(!remember)}
+							/>
+						}
+					/>
+				</Stack>
+
+				<LoadingButton
+					fullWidth
+					size="large"
+					type="submit"
+					variant="contained"
+					loading={isLoading}
+					// sx={{ bgcolor: 'success.main' }}
+				>
+					Login
+				</LoadingButton>
+			</Box>
+			<Grid container sx={{ mt: 2 }}>
+				<Grid item xs>
+					<Link
+						to="/restore"
+						state={{ from: pathname }}
+						component={LinkRRD}
+						variant="subtitle2"
+						underline="hover"
+					>
+						Forgot password?
+					</Link>
+				</Grid>
+				<Grid item>
+					<Link
+						to="/signup"
+						state={{ from: pathname }}
+						component={LinkRRD}
+						variant="subtitle2"
+						underline="hover"
+					>
+						{"Don't have an account? Sign Up"}
+					</Link>
+				</Grid>
+			</Grid>
+		</Container>
 	)
 }
 

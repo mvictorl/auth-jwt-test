@@ -1,45 +1,50 @@
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Link as LinkRRD, useLocation, useNavigate } from 'react-router-dom'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
-import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material'
-import Typography from '@mui/material/Typography'
-import Container from '@mui/material/Container'
-import Copyright from '../Copyright'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import { register } from '../../store/actions/authActions'
+// @mui
+import LoadingButton from '@mui/lab/LoadingButton'
 import {
-	selectErrors,
-	selectIsAuth,
+	Avatar,
+	Box,
+	Container,
+	Grid,
+	Link,
+	Stack,
+	TextField,
+	Typography,
+} from '@mui/material'
+// @mui/icons-material
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
+// Auth Logic
+import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
+import {
+	selectAuthErrors,
+	selectAuthIsAuth,
+	selectAuthLoading,
 	useAppDispatch,
 	useAppSelector,
-} from '../../store/hooks/stateHooks'
-import { clearError } from '../../store/slices/authSlice'
-import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
+} from '../../store/hooks'
+import { clearError } from '../../store/slices/auth-slice'
+import { register } from '../../store/thunks/auth-thunk'
 
-const theme = createTheme()
+// ----------------------------------------------------------------------
 
-function SignUp() {
+const SignUp = () => {
 	const dispatch = useAppDispatch()
-	const isAuth = useAppSelector(selectIsAuth)
-	const errors = useAppSelector(selectErrors)
+	const isAuth = useAppSelector(selectAuthIsAuth)
+	const isLoading = useAppSelector(selectAuthLoading)
+	const errors = useAppSelector(selectAuthErrors)
 
 	const { state, pathname } = useLocation()
 	const navigate = useNavigate()
 
-	const [username, setUsername] = useState<string>('')
-	const [usernameError, setUsernameError] = useState<string>(' ')
-
-	const [firstName, setFirstName] = useState<string>('')
+	const [firstName, setfirstName] = useState<string>('')
 	const [firstNameError, setFirstNameError] = useState<string>(' ')
 
-	const [lastName, setLastName] = useState<string>('')
+	const [lastName, setlastName] = useState<string>('')
 	const [lastNameError, setLastNameError] = useState<string>(' ')
+
+	const [nickname, setNickname] = useState<string>('')
+	const [nicknameError, setNicknameError] = useState<string>(' ')
 
 	const [email, setEmail] = useState<string>('')
 	const [emailError, setEmailError] = useState<string>(' ')
@@ -50,36 +55,27 @@ function SignUp() {
 	const [passwordConfirm, setPasswordConfirm] = useState<string>('')
 	const [passwordConfirmError, setPasswordConfirmError] = useState<string>(' ')
 
-	const [passwordShow, setPasswordShow] = useState<boolean>(false)
-	const [passwordConfirmShow, setPasswordConfirmShow] = useState<boolean>(false)
-
 	useEffect(() => {
 		if (isAuth) {
-			navigate(state?.from || '/')
+			navigate(state?.from || '/', { replace: true })
 		}
 	}, [isAuth])
 
 	useEffect(() => {
 		if (errors.length > 0) {
-			console.log('Errors:', errors)
-
 			errors.forEach((e: IValidationErrorResponse) => {
 				switch (e.param) {
-					case 'username':
-						setUsernameError(e.msg)
-						setUsername(e.value)
-						break
-					case 'email':
-						setEmailError(e.msg)
-						setEmail(e.value)
-						break
 					case 'firstName':
 						setFirstNameError(e.msg)
-						setFirstName(e.value)
+						setfirstName(e.value)
 						break
 					case 'lastName':
 						setLastNameError(e.msg)
-						setLastName(e.value)
+						setlastName(e.value)
+						break
+					case 'username':
+						setNicknameError(e.msg)
+						setNickname(e.value)
 						break
 					case 'password':
 						setPasswordError(e.msg)
@@ -95,14 +91,14 @@ function SignUp() {
 		}
 	}, [errors])
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 		dispatch(
 			register({
-				username,
-				email,
 				firstName,
 				lastName,
+				username: nickname,
+				email,
 				password,
 				passwordConfirm,
 			})
@@ -110,147 +106,139 @@ function SignUp() {
 	}
 
 	return (
-		<ThemeProvider theme={theme}>
-			<Container component="main" maxWidth="xs">
-				<CssBaseline />
-				<Box
-					sx={{
-						marginTop: 4,
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-					}}
-				>
-					<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						Sign up
-					</Typography>
+		<Container maxWidth="xs" sx={{ mt: 5 }}>
+			<Box component="form" onSubmit={handleSubmit} noValidate>
+				<Stack>
 					<Box
-						component="form"
-						noValidate
-						onSubmit={handleSubmit}
-						sx={{ mt: 3 }}
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							flexDirection: 'column',
+						}}
 					>
-						<Grid container columnSpacing={{ xs: 0, md: 1 }}>
-							<Grid item xs={12}>
-								<TextField
-									onChange={e => setUsername(e.target.value)}
-									onFocus={() => setUsernameError(' ')}
-									value={username}
-									required
-									fullWidth
-									id="username"
-									label="User Name"
-									name="username"
-									error={usernameError !== ' '}
-									helperText={usernameError || ' '}
-									autoComplete="username"
-									autoFocus
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									onChange={e => setFirstName(e.target.value)}
-									onFocus={() => setFirstNameError(' ')}
-									value={firstName}
-									name="firstName"
-									fullWidth
-									id="firstName"
-									label="First Name"
-									error={firstNameError !== ' '}
-									helperText={firstNameError || ' '}
-									autoComplete="given-name"
-								/>
-							</Grid>
-							<Grid item xs={12} sm={6}>
-								<TextField
-									onChange={e => setLastName(e.target.value)}
-									onFocus={() => setLastNameError(' ')}
-									value={lastName}
-									fullWidth
-									id="lastName"
-									label="Last Name"
-									name="lastName"
-									error={lastNameError !== ' '}
-									helperText={lastNameError || ' '}
-									autoComplete="family-name"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									onChange={e => setEmail(e.target.value)}
-									onFocus={() => setEmailError(' ')}
-									value={email}
-									required
-									fullWidth
-									id="email"
-									label="Email Address"
-									name="email"
-									error={emailError !== ' '}
-									helperText={emailError || ' '}
-									autoComplete="email"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									onChange={e => setPassword(e.target.value)}
-									onFocus={() => setPasswordError(' ')}
-									value={password}
-									type="password"
-									required
-									fullWidth
-									id="password"
-									label="Password"
-									name="password"
-									error={passwordError !== ' '}
-									helperText={passwordError || ' '}
-									autoComplete="new-password"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									onChange={e => setPasswordConfirm(e.target.value)}
-									onFocus={() => setPasswordConfirmError(' ')}
-									value={passwordConfirm}
-									type="password"
-									required
-									fullWidth
-									id="passwordConfirm"
-									name="passwordConfirm"
-									label="Confirm Password"
-									error={passwordConfirmError !== ' '}
-									helperText={passwordConfirmError || ' '}
-									autoComplete="new-password"
-								/>
-							</Grid>
-						</Grid>
-						<Button
-							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{ mt: 3, mb: 2 }}
-						>
+						<Avatar variant="rounded" sx={{ m: 1, bgcolor: 'secondary.light' }}>
+							<PersonAddIcon fontSize="large" />
+						</Avatar>
+						<Typography variant="h3" sx={{ my: 2 }}>
 							Sign Up
-						</Button>
-						<Grid container justifyContent="flex-end">
-							<Grid item>
-								<Link
-									to="/signin"
-									state={{ from: pathname }}
-									component={LinkRRD}
-									variant="body2"
-								>
-									Already have an account? Sign in
-								</Link>
-							</Grid>
-						</Grid>
+						</Typography>
 					</Box>
-				</Box>
-				<Copyright sx={{ mt: 5 }} />
-			</Container>
-		</ThemeProvider>
+					<Stack
+						direction={{ xs: 'column', sm: 'row' }}
+						spacing={{ sm: 2 }}
+						alignItems="baseline"
+					>
+						<TextField
+							value={firstName}
+							onChange={e => setfirstName(e.target.value)}
+							onFocus={() => setFirstNameError(' ')}
+							name="firstName"
+							label="First name"
+							fullWidth
+							margin="dense"
+							autoComplete="firstName"
+							error={firstNameError !== ' '}
+							helperText={firstNameError || ' '}
+						/>
+						<TextField
+							value={lastName}
+							onChange={e => setlastName(e.target.value)}
+							onFocus={() => setLastNameError(' ')}
+							name="lastName"
+							label="Last name"
+							fullWidth
+							margin="dense"
+							autoComplete="lastName"
+							error={lastNameError !== ' '}
+							helperText={lastNameError || ' '}
+						/>
+					</Stack>
+
+					<TextField
+						value={nickname}
+						required
+						onChange={e => setNickname(e.target.value)}
+						onFocus={() => setNicknameError(' ')}
+						name="nickname"
+						label="Nick name"
+						fullWidth
+						margin="dense"
+						autoComplete="username"
+						error={nicknameError !== ' '}
+						helperText={nicknameError || ' '}
+					/>
+
+					<TextField
+						value={email}
+						required
+						onChange={e => setEmail(e.target.value)}
+						onFocus={() => setEmailError(' ')}
+						name="email"
+						label="Email"
+						fullWidth
+						margin="dense"
+						autoComplete="email"
+						error={emailError !== ' '}
+						helperText={emailError || ' '}
+					/>
+
+					<TextField
+						value={password}
+						required
+						onChange={e => setPassword(e.target.value)}
+						onFocus={() => setPasswordError(' ')}
+						name="password"
+						label="Password"
+						type="password"
+						fullWidth
+						margin="dense"
+						autoComplete="password"
+						error={passwordError !== ' '}
+						helperText={passwordError || ' '}
+					/>
+
+					<TextField
+						value={passwordConfirm}
+						required
+						onChange={e => setPasswordConfirm(e.target.value)}
+						onFocus={() => setPasswordConfirmError(' ')}
+						name="passwordConfirm"
+						label="Confirm password"
+						type="password"
+						fullWidth
+						margin="dense"
+						autoComplete="passwordConfirm"
+						error={passwordConfirmError !== ' '}
+						helperText={passwordConfirmError || ' '}
+					/>
+				</Stack>
+
+				<LoadingButton
+					fullWidth
+					size="large"
+					type="submit"
+					variant="contained"
+					loading={isLoading}
+					// sx={{ bgcolor: 'secondary.light' }}
+				>
+					Login
+				</LoadingButton>
+			</Box>
+			<Grid container sx={{ mt: 2 }}>
+				<Grid item xs></Grid>
+				<Grid item>
+					<Link
+						to="/signin"
+						state={{ from: pathname }}
+						component={LinkRRD}
+						variant="subtitle2"
+						underline="hover"
+					>
+						{'Do you already have an account? Sign In'}
+					</Link>
+				</Grid>
+			</Grid>
+		</Container>
 	)
 }
 

@@ -1,23 +1,23 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { AuthService } from '../../service/auth-service'
 
-export const startup = createAsyncThunk(
-	'auth/startup',
-	async (_, { rejectWithValue }) => {
-		try {
-			const data = await AuthService.startup()
-			if (!data.user || !data.accessToken) throw Error('Server error on Login')
-			else {
-				return { currentUser: data.user }
-			}
-		} catch (error: any) {
-			if (error.response && error.response.data.errors) {
-				return rejectWithValue(error.response.data.errors)
-			}
-			return rejectWithValue(error)
-		}
-	}
-)
+// export const startup = createAsyncThunk(
+// 	'auth/startup',
+// 	async (_, { rejectWithValue }) => {
+// 		try {
+// 			const data = await AuthService.startup()
+// 			if (!data.user || !data.accessToken) throw Error('Server error on Login')
+// 			else {
+// 				return { currentUser: data.user }
+// 			}
+// 		} catch (error: any) {
+// 			if (error.response && error.response.data.errors) {
+// 				return rejectWithValue(error.response.data.errors)
+// 			}
+// 			return rejectWithValue(error)
+// 		}
+// 	}
+// )
 
 type registerProps = {
 	username: string

@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-
-import { IRootState } from '..'
 import { IUser } from '../../interfaces/IUser'
 import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
-import { check, login, logout, register, startup } from '../actions/authActions'
+import { check, login, logout, register } from '../thunks/auth-thunk'
 
 // Initial Auth State
 const initialState = {
@@ -21,32 +19,29 @@ const authSlice = createSlice({
 		clearError: state => {
 			state.errors = []
 		},
-		// clearAuth: state => {
-		// 	state = initialState
-		// },
 	},
 	extraReducers(builder) {
 		// === Startup ====
-		builder.addCase(startup.pending, state => {
-			console.log('Startup pending')
-			state.loading = true
-			state.errors = []
-		})
-		builder.addCase(startup.fulfilled, (state, action) => {
-			console.log('Startup fulfilled')
-			state.loading = false
-			state.success = true
-			state.currentUser = action.payload.currentUser
-			state.isAuth = true
-		})
-		builder.addCase(startup.rejected, (state, action) => {
-			console.log('Startup rejected')
-			state.loading = false
-			state.errors = action.payload as IValidationErrorResponse[]
-			state.isAuth = false
-			localStorage.clear()
-			state.currentUser = {} as IUser
-		})
+		// builder.addCase(startup.pending, state => {
+		// 	console.log('Startup pending')
+		// 	state.loading = true
+		// 	state.errors = []
+		// })
+		// builder.addCase(startup.fulfilled, (state, action) => {
+		// 	console.log('Startup fulfilled')
+		// 	state.loading = false
+		// 	state.success = true
+		// 	state.currentUser = action.payload.currentUser
+		// 	state.isAuth = true
+		// })
+		// builder.addCase(startup.rejected, (state, action) => {
+		// 	console.log('Startup rejected')
+		// 	state.loading = false
+		// 	state.errors = action.payload as IValidationErrorResponse[]
+		// 	state.isAuth = false
+		// 	localStorage.clear()
+		// 	state.currentUser = {} as IUser
+		// })
 
 		// === Registration ====
 		builder.addCase(register.pending, state => {
@@ -71,11 +66,13 @@ const authSlice = createSlice({
 
 		// === Login ====
 		builder.addCase(login.pending, state => {
+			console.log('Login Pending')
 			state.isAuth = false
 			state.loading = true
 			state.errors = []
 		})
 		builder.addCase(login.fulfilled, (state, action) => {
+			console.log('Login Fulfilled')
 			state.success = true
 			state.currentUser = action.payload.currentUser
 			state.isAuth = true
@@ -91,12 +88,12 @@ const authSlice = createSlice({
 
 		// === Logout ====
 		builder.addCase(logout.pending, state => {
-			console.log('Logout pending')
+			console.log('Logout Pending')
 			state.loading = true
 			state.errors = []
 		})
 		builder.addCase(logout.fulfilled, state => {
-			console.log('Logout fulfilled')
+			console.log('Logout Fulfilled')
 			state.loading = false
 			state.success = true
 			state.errors = [] as IValidationErrorResponse[]
@@ -104,7 +101,7 @@ const authSlice = createSlice({
 			state.currentUser = {} as IUser
 		})
 		builder.addCase(logout.rejected, (state, action) => {
-			console.log('Logout rejected')
+			console.log('Logout Rejected')
 			state.loading = false
 			state.errors = [] as IValidationErrorResponse[]
 			state.currentUser = {} as IUser
@@ -112,19 +109,19 @@ const authSlice = createSlice({
 		})
 		// === Check ====
 		builder.addCase(check.pending, state => {
-			console.log('Check pending')
+			console.log('Check Pending')
 			state.loading = true
 			state.errors = []
 		})
 		builder.addCase(check.fulfilled, (state, action) => {
-			console.log('Check fulfilled')
+			console.log('Check Fulfilled')
 			state.success = true
 			state.currentUser = action.payload.currentUser
 			state.isAuth = true
 			state.loading = false
 		})
 		builder.addCase(check.rejected, (state, action) => {
-			console.log('Check rejected', state.errors)
+			console.log('Check Rejected', state.errors)
 			state.isAuth = false
 			state.currentUser = {} as IUser
 			state.errors = action.payload as IValidationErrorResponse[]
