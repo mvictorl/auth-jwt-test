@@ -34,7 +34,7 @@ import { clearError, clearSuccess } from '../../store/slices/auth-slice'
 import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
 
 import { useSnackbar } from 'notistack'
-import ReportComplete from '../Snackbar/MySuccess'
+import ReportSuccessEnlarged from '../Snackbar/ReportSuccessEnlarged'
 
 // ----------------------------------------------------------------------
 
@@ -66,7 +66,9 @@ const SignIn = () => {
 
 	useEffect(() => {
 		if (isSuccess) {
-			enqueueSnackbar('Secceful authorization!', { variant: 'reportComplete' })
+			enqueueSnackbar('Successful authorization!', {
+				variant: 'success',
+			})
 			dispatch(clearSuccess())
 		}
 	}, [isSuccess])

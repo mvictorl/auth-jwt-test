@@ -5,6 +5,9 @@ import HomePage from './pages/HomePage'
 import ErrorPage from './pages/ErrorPage'
 import SignUp from './components/Auth/SignUp'
 import SignIn from './components/Auth/SignIn'
+import ProfilePage from './pages/ProfilePage'
+import DashboardPage from './pages/DashboardPage'
+import AccountPage from './pages/AccountPage'
 
 export const Router = createBrowserRouter([
 	{
@@ -15,6 +18,18 @@ export const Router = createBrowserRouter([
 			{
 				index: true,
 				element: <HomePage />,
+			},
+			{
+				path: 'dashboard',
+				element: <DashboardPage />,
+			},
+			{
+				path: 'account',
+				element: <AccountPage />,
+			},
+			{
+				path: 'profile',
+				element: <ProfilePage />,
 			},
 			{
 				path: 'signup',

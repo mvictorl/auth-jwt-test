@@ -70,71 +70,80 @@ const StyledSnackbarContent = styled(SnackbarContent)(() => ({
 	},
 }))
 
-interface ReportCompleteProps extends CustomContentProps {
+interface ReportSeccussEnlargedProps extends CustomContentProps {
 	allowDownload?: boolean
+	text?: string
 }
 
-const ReportComplete = forwardRef<HTMLDivElement, ReportCompleteProps>(
-	({ id, ...props }, ref) => {
-		const { closeSnackbar } = useSnackbar()
-		const [expanded, setExpanded] = useState(false)
+const ReportSeccussEnlarged = forwardRef<
+	HTMLDivElement,
+	ReportSeccussEnlargedProps
+>((props, ref) => {
+	const { closeSnackbar } = useSnackbar()
+	const [expanded, setExpanded] = useState(false)
 
-		const handleExpandClick = useCallback(() => {
-			setExpanded(oldExpanded => !oldExpanded)
-		}, [])
+	const handleExpandClick = useCallback(() => {
+		setExpanded(oldExpanded => !oldExpanded)
+	}, [])
 
-		const handleDismiss = useCallback(() => {
-			closeSnackbar(id)
-		}, [id, closeSnackbar])
+	const handleDismiss = useCallback(() => {
+		closeSnackbar(props.id)
+	}, [props.id, closeSnackbar])
 
-		return (
-			<StyledSnackbarContent ref={ref} className={classes.root}>
-				<Card className={classes.card} style={{ backgroundColor: '#fddc6c' }}>
-					<CardActions classes={{ root: classes.actionRoot }}>
-						<Typography variant="body2" className={classes.typography}>
-							{props.message}
+	const logs = () => console.log('Text:', props.text)
+
+	return (
+		<StyledSnackbarContent ref={ref} className={classes.root}>
+			<Card className={classes.card} style={{ backgroundColor: '#fddc6c' }}>
+				<CardActions classes={{ root: classes.actionRoot }}>
+					<Typography variant="body2" className={classes.typography}>
+						{props.message}
+					</Typography>
+					<div className={classes.icons}>
+						<IconButton
+							aria-label="Show more"
+							size="small"
+							className={clsx(classes.expand, {
+								[classes.expandOpen]: expanded,
+							})}
+							onClick={handleExpandClick}
+						>
+							<ExpandMoreIcon />
+						</IconButton>
+						<IconButton
+							size="small"
+							className={classes.expand}
+							onClick={handleDismiss}
+						>
+							<CloseIcon fontSize="small" />
+						</IconButton>
+					</div>
+				</CardActions>
+				<Collapse in={expanded} timeout="auto" unmountOnExit>
+					<Paper className={classes.paper}>
+						<Typography
+							gutterBottom
+							variant="caption"
+							style={{ color: '#000', display: 'block' }}
+						>
+							PDF ready
 						</Typography>
-						<div className={classes.icons}>
-							<IconButton
-								aria-label="Show more"
-								size="small"
-								className={clsx(classes.expand, {
-									[classes.expandOpen]: expanded,
-								})}
-								onClick={handleExpandClick}
-							>
-								<ExpandMoreIcon />
-							</IconButton>
-							<IconButton
-								size="small"
-								className={classes.expand}
-								onClick={handleDismiss}
-							>
-								<CloseIcon fontSize="small" />
-							</IconButton>
-						</div>
-					</CardActions>
-					<Collapse in={expanded} timeout="auto" unmountOnExit>
-						<Paper className={classes.paper}>
-							<Typography
-								gutterBottom
-								variant="caption"
-								style={{ color: '#000', display: 'block' }}
-							>
-								PDF ready
-							</Typography>
-							<Button size="small" color="primary" className={classes.button}>
-								<CheckCircleIcon className={classes.checkIcon} />
-								Download now
-							</Button>
-						</Paper>
-					</Collapse>
-				</Card>
-			</StyledSnackbarContent>
-		)
-	}
-)
+						<Button
+							onClick={logs}
+							size="small"
+							color="primary"
+							className={classes.button}
+						>
+							<CheckCircleIcon className={classes.checkIcon} />
+							Download now
+						</Button>
+					</Paper>
+				</Collapse>
+			</Card>
+		</StyledSnackbarContent>
+	)
+})
 
-ReportComplete.displayName = 'ReportComplete'
+ReportSeccussEnlarged.displayName = 'ReportComplete'
 
-export default ReportComplete
+export default ReportSeccussEnlarged

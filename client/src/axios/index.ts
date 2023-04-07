@@ -1,7 +1,4 @@
 import axios from 'axios'
-// import { IAuthResponse } from '../interfaces/IAuthResponse'
-
-// const API_URL: string = process.env.REACT_APP_API_URL || ''
 const API_URL: string = import.meta.env.VITE_API_URL || ''
 const SELF_URL: string = import.meta.env.VITE_SELF_URL || ''
 
@@ -11,9 +8,12 @@ export const $api = axios.create({
 })
 
 $api.interceptors.request.use(config => {
-	axios.defaults.headers.common[
-		'Authorization'
-	] = `Bearer ${localStorage.getItem('bearer-token')}`
+	// axios.defaults.headers.common[
+	// 	'Authorization'
+	// ] = `Bearer ${localStorage.getItem('bearer-token')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem(
+		'bearer-token'
+	)}`
 	return config
 })
 

@@ -11,11 +11,14 @@ import { Provider } from 'react-redux'
 import { store } from './store'
 
 import { SnackbarProvider } from 'notistack'
-import ReportComplete from './components/Snackbar/MySuccess'
+import ReportSuccessEnlarged from './components/Snackbar/ReportSuccessEnlarged'
 
 declare module 'notistack' {
 	interface VariantOverrides {
-		reportComplete: true
+		reportSuccessEnlarged: {
+			title?: string
+			details?: string
+		}
 	}
 }
 
@@ -24,7 +27,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 		<SnackbarProvider
 			maxSnack={5}
 			Components={{
-				reportComplete: ReportComplete,
+				reportSuccessEnlarged: ReportSuccessEnlarged,
 			}}
 		>
 			<App />

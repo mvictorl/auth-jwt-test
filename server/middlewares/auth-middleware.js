@@ -5,7 +5,6 @@ module.exports = async function (req, res, next) {
 	console.log('===== Auth Midleware =====')
 	try {
 		const authHeader = req.headers.authorization
-		console.log(req.headers)
 
 		if (!authHeader) {
 			console.log('No Auth Header')

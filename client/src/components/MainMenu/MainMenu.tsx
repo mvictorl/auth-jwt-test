@@ -1,6 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu'
 import AppBar from '@mui/material/AppBar'
-import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
@@ -9,32 +8,23 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
-import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { MouseEvent, useState } from 'react'
 import { Link as LinkRRD } from 'react-router-dom'
 import Logo from './Logo'
+import UserComponent from './UserComponent'
 
 const pages = ['Products', 'Pricing', 'Blog']
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout']
 
 function MainMenu() {
 	const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
-	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
 
 	const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget)
 	}
-	const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
-		setAnchorElUser(event.currentTarget)
-	}
 
 	const handleCloseNavMenu = () => {
 		setAnchorElNav(null)
-	}
-
-	const handleCloseUserMenu = () => {
-		setAnchorElUser(null)
 	}
 
 	return (
@@ -136,35 +126,7 @@ function MainMenu() {
 						</Stack>
 					</Box>
 
-					<Box sx={{ flexGrow: 0 }}>
-						<Tooltip title="Open settings">
-							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-								<Avatar alt="Remy Sharp" src="/images/avatar/2.jpg" />
-							</IconButton>
-						</Tooltip>
-						<Menu
-							sx={{ mt: '45px' }}
-							id="menu-appbar"
-							anchorEl={anchorElUser}
-							anchorOrigin={{
-								vertical: 'top',
-								horizontal: 'right',
-							}}
-							keepMounted
-							transformOrigin={{
-								vertical: 'top',
-								horizontal: 'right',
-							}}
-							open={Boolean(anchorElUser)}
-							onClose={handleCloseUserMenu}
-						>
-							{settings.map(setting => (
-								<MenuItem key={setting} onClick={handleCloseUserMenu}>
-									<Typography textAlign="center">{setting}</Typography>
-								</MenuItem>
-							))}
-						</Menu>
-					</Box>
+					<UserComponent />
 				</Toolbar>
 			</Container>
 		</AppBar>

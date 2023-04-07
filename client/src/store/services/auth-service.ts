@@ -30,6 +30,7 @@ async function login(
 	password: string,
 	remember: boolean = false
 ): Promise<IAuthResponse> {
+	console.log('Service Login Start')
 	const response = await $api.post('/auth/signin', {
 		username,
 		password,
@@ -38,9 +39,8 @@ async function login(
 	return response.data
 }
 
-async function logout(): Promise<IAuthResponse> {
-	const response = await $api.post('/auth/signout')
-	console.log('Service Logout', response)
+async function logout() {
+	const response = await $api.get('/auth/signout')
 	return response.data
 }
 

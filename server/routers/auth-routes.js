@@ -82,6 +82,7 @@ router.post(
 )
 
 router.get('/auth/signout', authMiddleware, authCtrl.signout)
+// router.get('/auth/signout', authCtrl.signout)
 
 router.get('/auth/refresh', authCtrl.refresh)
 

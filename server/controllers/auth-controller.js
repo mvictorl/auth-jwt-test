@@ -71,6 +71,7 @@ class AuthContriller {
 		try {
 			const { refreshToken } = req.cookies // Take the 'refreshToken' token from cookie
 			if (refreshToken) {
+				console.log('Controller Logout')
 				const data = await authSrv.signout(refreshToken) // Call 'logout' service function
 				res.clearCookie('refreshToken') // Delete the 'refreshToken' cookie
 				return res.json(data) // Return response to client

@@ -160,7 +160,6 @@ class AuthService {
 		try {
 			return await tokenSrv.removeToken(refreshToken)
 		} catch (e) {
-			console.error('Signin server error', e)
 			throw new ApiError.ServerError('Signout server error', e)
 		}
 	}

@@ -88,10 +88,15 @@ export const login = createAsyncThunk(
 
 export const logout = createAsyncThunk(
 	'auth/logout',
-	async ({}, { rejectWithValue }) => {
+	async (_, { rejectWithValue }) => {
+		console.log('Thunk Logout Start')
 		try {
-			return await AuthService.logout()
+			const data = await AuthService.logout()
+			console.log('Data Logout:', data)
+
+			return data.count
 		} catch (error: any) {
+			console.error('Error Logout:', error)
 			return rejectWithValue(error)
 		}
 	}
