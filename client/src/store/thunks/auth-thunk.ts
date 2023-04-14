@@ -92,8 +92,6 @@ export const logout = createAsyncThunk(
 		console.log('Thunk Logout Start')
 		try {
 			const data = await AuthService.logout()
-			console.log('Data Logout:', data)
-
 			return data.count
 		} catch (error: any) {
 			console.error('Error Logout:', error)
@@ -129,6 +127,23 @@ export const check = createAsyncThunk(
 			// 	error.toString()
 			// dispatch(setMessage(message))
 			// return { currentUser: initialState.currentUser }
+		}
+	}
+)
+
+type restoreProps = {
+	code: string
+}
+export const restore = createAsyncThunk(
+	'auth/restore',
+	async ({ code }: restoreProps, { rejectWithValue }) => {
+		console.log('Thunk Restore Start')
+		try {
+			const data = await AuthService.tryRestore(code)
+			return data
+		} catch (error: any) {
+			console.error('Error Logout:', error)
+			return rejectWithValue(error)
 		}
 	}
 )

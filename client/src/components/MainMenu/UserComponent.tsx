@@ -10,6 +10,7 @@ import {
 	ListItemText,
 	Menu,
 	MenuItem,
+	Paper,
 	Stack,
 	Tooltip,
 	Typography,
@@ -75,19 +76,19 @@ function UserComponent() {
 				>
 					<Stack direction="row" margin={1.5} alignItems="flex-end">
 						<PersonOutlinedIcon />
-						<Typography variant="subtitle2" flexGrow={1} textAlign="right">
+						<Typography
+							variant="subtitle2"
+							flexGrow={1}
+							textAlign="right"
+							sx={{ fontStyle: 'italic' }}
+						>
 							{loggedUser.firstName} {loggedUser.lastName}
 						</Typography>
 					</Stack>
 					<Divider />
-					{/* {settings.map(setting => (
-						<MenuItem key={setting} onClick={handleCloseUserMenu}>
-							<Typography textAlign="center">{setting}</Typography>
-						</MenuItem>
-					))} */}
 					<MenuItem
 						onClick={handleCloseUserMenu}
-						to="/profile"
+						to="/dashboard"
 						component={LinkRRD}
 					>
 						<ListItemIcon>
@@ -97,7 +98,7 @@ function UserComponent() {
 					</MenuItem>
 					<MenuItem
 						onClick={handleCloseUserMenu}
-						to="/dashboard"
+						to="/account"
 						component={LinkRRD}
 					>
 						<ListItemIcon>
@@ -107,7 +108,7 @@ function UserComponent() {
 					</MenuItem>
 					<MenuItem
 						onClick={handleCloseUserMenu}
-						to="/account"
+						to="/profile"
 						component={LinkRRD}
 					>
 						<ListItemIcon>

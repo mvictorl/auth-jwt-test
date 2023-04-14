@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { IUser } from '../../interfaces/IUser'
 import { IValidationErrorResponse } from '../../interfaces/IValidationErrorResponse'
-import { check, login, logout, register } from '../thunks/auth-thunk'
+import { check, login, logout, register, restore } from '../thunks/auth-thunk'
 
 // Initial Auth State
 const initialState = {
@@ -105,7 +105,7 @@ const authSlice = createSlice({
 			state.isAuth = false
 			state.currentUser = {} as IUser
 		})
-		builder.addCase(logout.rejected, (state, action) => {
+		builder.addCase(logout.rejected, state => {
 			console.log('Logout Rejected')
 			state.loading = false
 			state.errors = [] as IValidationErrorResponse[]
@@ -129,6 +129,22 @@ const authSlice = createSlice({
 			console.log('Check Rejected', state.errors)
 			state.isAuth = false
 			state.currentUser = {} as IUser
+			state.errors = action.payload as IValidationErrorResponse[]
+			state.loading = false
+		})
+		// === Restore ====
+		builder.addCase(restore.pending, state => {
+			console.log('Restore Pending')
+			state.loading = true
+			state.errors = []
+		})
+		builder.addCase(restore.fulfilled, (state, action) => {
+			console.log('Restore Fulfilled')
+			state.success = true
+			state.loading = false
+		})
+		builder.addCase(restore.rejected, (state, action) => {
+			console.log('Restore Rejected', state.errors)
 			state.errors = action.payload as IValidationErrorResponse[]
 			state.loading = false
 		})

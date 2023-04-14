@@ -13,6 +13,7 @@ import { MouseEvent, useState } from 'react'
 import { Link as LinkRRD } from 'react-router-dom'
 import Logo from './Logo'
 import UserComponent from './UserComponent'
+import LanguagePopover from './LanguagePopover'
 
 const pages = ['Products', 'Pricing', 'Blog']
 
@@ -67,11 +68,11 @@ function MainMenu() {
 							<MenuItem
 								onClick={handleCloseNavMenu}
 								component={LinkRRD}
-								to="/signup"
+								to="/tester"
 							>
-								<Typography textAlign="center">SignUp</Typography>
+								<Typography textAlign="center">Tester</Typography>
 							</MenuItem>
-							<MenuItem
+							{/* <MenuItem
 								onClick={handleCloseNavMenu}
 								component={LinkRRD}
 								to="/signin"
@@ -82,7 +83,7 @@ function MainMenu() {
 								<MenuItem key={page} onClick={handleCloseNavMenu}>
 									<Typography textAlign="center">{page}</Typography>
 								</MenuItem>
-							))}
+							))} */}
 						</Menu>
 					</Box>
 
@@ -101,20 +102,20 @@ function MainMenu() {
 								onClick={handleCloseNavMenu}
 								sx={{ my: 2, color: 'white', display: 'block' }}
 								component={LinkRRD}
-								to="/signup"
+								to="/tester"
 							>
-								SignUp
+								Tester
 							</Button>
-							<Button
+							{/* <Button
 								onClick={handleCloseNavMenu}
 								sx={{ my: 2, color: 'white', display: 'block' }}
 								component={LinkRRD}
 								to="/signin"
 							>
 								SignIn
-							</Button>
+							</Button> */}
 
-							{pages.map(page => (
+							{/* {pages.map(page => (
 								<Button
 									key={page}
 									onClick={handleCloseNavMenu}
@@ -122,10 +123,10 @@ function MainMenu() {
 								>
 									{page}
 								</Button>
-							))}
+							))} */}
 						</Stack>
 					</Box>
-
+					<LanguagePopover />
 					<UserComponent />
 				</Toolbar>
 			</Container>

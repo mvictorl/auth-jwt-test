@@ -65,13 +65,13 @@ const SignIn = () => {
 	}, [isAuth])
 
 	useEffect(() => {
-		if (isSuccess) {
+		if (isSuccess && isAuth) {
 			enqueueSnackbar('Successful authorization!', {
 				variant: 'success',
 			})
 			dispatch(clearSuccess())
 		}
-	}, [isSuccess])
+	}, [isSuccess, isAuth])
 
 	useEffect(() => {
 		if (errors.length > 0) {

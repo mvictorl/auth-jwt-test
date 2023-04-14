@@ -12,7 +12,7 @@ function Logo() {
 		>
 			<Box
 				component="img"
-				src="images/Gazprom_White.ico"
+				src="/images/Gazprom_White.ico"
 				sx={{ height: 48, mr: 2 }}
 			/>
 

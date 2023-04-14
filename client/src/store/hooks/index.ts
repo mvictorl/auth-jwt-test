@@ -14,3 +14,5 @@ export const selectAuthCurrentUser = (state: RootState) =>
 export const selectAuthLoading = (state: RootState) => state.auth.loading
 export const selectAuthErrors = (state: RootState) => state.auth.errors
 export const selectAuthSuccess = (state: RootState) => state.auth.success
+
+// export const selectLocale = (state: RootState) => state.locale.value
