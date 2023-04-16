@@ -4,7 +4,7 @@ import { RootState } from '..'
 
 import * as locales from '@mui/material/locale'
 
-type SupportedLocales = keyof typeof locales
+export type SupportedLocales = keyof typeof locales
 
 export interface LocaleState {
 	value: SupportedLocales
@@ -12,7 +12,6 @@ export interface LocaleState {
 
 const initialState: LocaleState = {
 	value: 'enUS',
-	// value: 'ruRU',
 }
 
 export const localeSlice = createSlice({

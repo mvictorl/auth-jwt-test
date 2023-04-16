@@ -24,28 +24,6 @@ const authSlice = createSlice({
 		},
 	},
 	extraReducers(builder) {
-		// === Startup ====
-		// builder.addCase(startup.pending, state => {
-		// 	console.log('Startup pending')
-		// 	state.loading = true
-		// 	state.errors = []
-		// })
-		// builder.addCase(startup.fulfilled, (state, action) => {
-		// 	console.log('Startup fulfilled')
-		// 	state.loading = false
-		// 	state.success = true
-		// 	state.currentUser = action.payload.currentUser
-		// 	state.isAuth = true
-		// })
-		// builder.addCase(startup.rejected, (state, action) => {
-		// 	console.log('Startup rejected')
-		// 	state.loading = false
-		// 	state.errors = action.payload as IValidationErrorResponse[]
-		// 	state.isAuth = false
-		// 	localStorage.clear()
-		// 	state.currentUser = {} as IUser
-		// })
-
 		// === Registration ====
 		builder.addCase(register.pending, state => {
 			console.log('Register pending')
