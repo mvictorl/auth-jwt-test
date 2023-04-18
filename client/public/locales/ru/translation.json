@@ -1,0 +1,16 @@
+{
+	"auth": {
+		"dont-have-account": "Нет аккаунта? Регистрация",
+		"forgot-pass": "Forgot password?",
+		"login": "Вход",
+		"nick-name": "Псевдоним",
+		"password": "Пароль",
+		"remember": "Запомнить",
+		"sign-in": "Войти",
+		"successful": "Успешный вход"
+	},
+	"main-menu": {
+		"home": "Домашняя",
+		"tester": "Тестер"
+	}
+}

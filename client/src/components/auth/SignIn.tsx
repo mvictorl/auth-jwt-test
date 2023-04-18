@@ -35,10 +35,12 @@ import { IValidationErrorResponse } from '../../interfaces/IValidationErrorRespo
 
 import { useSnackbar } from 'notistack'
 import ReportSuccessEnlarged from '../Snackbar/ReportSuccessEnlarged'
+import { useTranslation } from 'react-i18next'
 
 // ----------------------------------------------------------------------
 
 const SignIn = () => {
+	const { t } = useTranslation()
 	const dispatch = useAppDispatch()
 	const isAuth = useAppSelector(selectAuthIsAuth)
 	const isLoading = useAppSelector(selectAuthLoading)
@@ -66,7 +68,7 @@ const SignIn = () => {
 
 	useEffect(() => {
 		if (isSuccess && isAuth) {
-			enqueueSnackbar('Successful authorization!', {
+			enqueueSnackbar(t('auth.successful'), {
 				variant: 'success',
 			})
 			dispatch(clearSuccess())
@@ -111,7 +113,7 @@ const SignIn = () => {
 							<LockOpenIcon fontSize="large" />
 						</Avatar>
 						<Typography variant="h3" sx={{ my: 2 }}>
-							Sign In
+							{t('auth.sign-in')}
 						</Typography>
 					</Box>
 
@@ -121,7 +123,7 @@ const SignIn = () => {
 						onChange={e => setNickname(e.target.value)}
 						onFocus={() => setNicknameError(' ')}
 						name="nickname"
-						label="Nick name"
+						label={t('auth.nick-name')}
 						fullWidth
 						margin="dense"
 						autoComplete="nickame"
@@ -135,7 +137,7 @@ const SignIn = () => {
 						onChange={e => setPassword(e.target.value)}
 						onFocus={() => setPasswordError(' ')}
 						name="password"
-						label="Password"
+						label={t('auth.password')}
 						type={showPassword ? 'text' : 'password'}
 						fullWidth
 						margin="dense"
@@ -164,7 +166,7 @@ const SignIn = () => {
 					sx={{ mb: 2 }}
 				>
 					<FormControlLabel
-						label="Remember me"
+						label={t('auth.remember')}
 						control={
 							<Checkbox
 								name="remember"
@@ -183,7 +185,7 @@ const SignIn = () => {
 					loading={isLoading}
 					// sx={{ bgcolor: 'success.main' }}
 				>
-					Login
+					{t('auth.login')}
 				</LoadingButton>
 			</Box>
 			<Grid container sx={{ mt: 2 }}>
@@ -195,7 +197,7 @@ const SignIn = () => {
 						variant="subtitle2"
 						underline="hover"
 					>
-						Forgot password?
+						{t('auth.forgot-pass')}
 					</Link>
 				</Grid>
 				<Grid item>
@@ -206,7 +208,7 @@ const SignIn = () => {
 						variant="subtitle2"
 						underline="hover"
 					>
-						{"Don't have an account? Sign Up"}
+						{t('auth.dont-have-account')}
 					</Link>
 				</Grid>
 			</Grid>

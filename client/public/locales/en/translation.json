@@ -1,0 +1,16 @@
+{
+	"auth": {
+		"forgot-pass": "Forgot password?",
+		"login": "Login",
+		"nick-name": "Nick Name",
+		"password": "Password",
+		"remember": "Remember me",
+		"sign-in": "Sign In",
+		"successful": "Successfuly login",
+		"dont-have-account": "Don't have an account? Sign Up"
+	},
+	"main-menu": {
+		"home": "Home",
+		"tester": "Tester"
+	}
+}
