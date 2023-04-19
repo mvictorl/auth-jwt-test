@@ -26,8 +26,10 @@ import { IValidationErrorResponse } from '../../interfaces/IValidationErrorRespo
 import { clearError, clearSuccess } from '../../store/slices/auth-slice'
 import { restore } from '../../store/thunks/auth-thunk'
 import { useSnackbar } from 'notistack'
+import { useTranslation } from 'react-i18next'
 
 const UseRestoreCode = () => {
+	const { t } = useTranslation()
 	const { state, pathname } = useLocation()
 	const navigate = useNavigate()
 
@@ -47,10 +49,7 @@ const UseRestoreCode = () => {
 				if (e.param === 'code') {
 					setCodeError(e.msg)
 					setCode(e.value)
-					enqueueSnackbar(
-						'An error occurred generating the password recovery code',
-						{ variant: 'error' }
-					)
+					enqueueSnackbar(t('error-occurred'), { variant: 'error' })
 				}
 			})
 			dispatch(clearError())
@@ -71,7 +70,7 @@ const UseRestoreCode = () => {
 
 	const onSubmit = () => {
 		dispatch(restore({ code })).then(() => {
-			enqueueSnackbar('Successfully password change', {
+			enqueueSnackbar(t('successful-change'), {
 				variant: 'success',
 			})
 		})
@@ -98,8 +97,7 @@ const UseRestoreCode = () => {
 							textAlign: 'center',
 						}}
 					>
-						Password Restore Code <br />
-						successfully generated
+						{t('password-restore')}
 					</Typography>
 				</Box>
 
@@ -109,7 +107,7 @@ const UseRestoreCode = () => {
 					value={code}
 					onChange={e => setCode(e.currentTarget.value)}
 					name="code"
-					label="Change password code"
+					label={t('change-pass-code')}
 					fullWidth
 					margin="dense"
 					error={codeError !== ' '}
@@ -133,7 +131,7 @@ const UseRestoreCode = () => {
 				variant="contained"
 				loading={isLoading}
 			>
-				Change
+				{t('change')}
 			</LoadingButton>
 
 			<Grid container sx={{ mt: 2 }}>
@@ -148,7 +146,7 @@ const UseRestoreCode = () => {
 							textDecoration: 'none',
 						}}
 					>
-						Go to Home
+						{t('go-to-home')}
 					</Link>
 				</Grid>
 			</Grid>

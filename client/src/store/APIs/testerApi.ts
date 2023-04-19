@@ -1,4 +1,10 @@
-import { BaseQueryFn, FetchArgs, FetchBaseQueryError, createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import {
+	BaseQueryFn,
+	FetchArgs,
+	FetchBaseQueryError,
+	createApi,
+	fetchBaseQuery,
+} from '@reduxjs/toolkit/query/react'
 import { IUser } from '../../interfaces/IUser'
 import { IAuthResponse } from '../../interfaces/IAuthResponse'
 import { store } from '..'
@@ -9,11 +15,13 @@ export interface ITestLight {
 	title: string
 	description: string
 	isMultiple: boolean
-	userId: string
+	userId?: string
 }
 
 export interface ITest extends ITestLight {
+	createdAt: string
 	questions: Question[]
+	author: IUser
 }
 
 export interface Question {
@@ -49,7 +57,11 @@ const baseQueryWithReauth: BaseQueryFn<
 	let result = await baseQuery(args, api, extraOptions)
 	if (result.error && result.error.status === 401) {
 		// try to get a new token
-		const refreshResult = await baseQuery('http://localhost:5000/api/auth/refresh', api, extraOptions)
+		const refreshResult = await baseQuery(
+			'http://localhost:5000/api/auth/refresh',
+			api,
+			extraOptions
+		)
 		const data = refreshResult.data as IAuthResponse
 		if (data) {
 			// store the new token
@@ -61,7 +73,7 @@ const baseQueryWithReauth: BaseQueryFn<
 			// retry the initial query below
 			result = await baseQuery(args, api, extraOptions)
 		} else {
-			// store.dispatch(logout())
+			localStorage.clear()
 		}
 	}
 	return result
@@ -77,7 +89,7 @@ export const testerApi = createApi({
 			providesTags: ['Tests'],
 		}),
 
-		getOneTest: builder.query<ITest, number>({
+		getOneTest: builder.query<ITest, string>({
 			query: testId => `exercises/${testId}`,
 			providesTags: ['Tests'],
 		}),
@@ -91,8 +103,10 @@ export const testerApi = createApi({
 			invalidatesTags: ['Tests'],
 		}),
 	}),
-
-
 })
 
-export const { useGetAllTestsQuery, useGetOneTestQuery, useAddNewTestMutation } = testerApi
+export const {
+	useGetAllTestsQuery,
+	useGetOneTestQuery,
+	useAddNewTestMutation,
+} = testerApi

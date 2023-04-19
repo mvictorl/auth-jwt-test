@@ -1,5 +1,5 @@
 import React, { MouseEvent, useState } from 'react'
-import { Link as LinkRRD } from 'react-router-dom'
+import { Link as LinkRRD, useLocation } from 'react-router-dom'
 // @mui
 import {
 	Avatar,
@@ -29,10 +29,13 @@ import {
 	useAppSelector,
 } from '../../store/hooks'
 import { logout } from '../../store/thunks/auth-thunk'
+import { useTranslation } from 'react-i18next'
 
 function UserComponent() {
+	const { t } = useTranslation()
 	const isAuth = useAppSelector(selectAuthIsAuth)
 	const loggedUser = useAppSelector(selectAuthCurrentUser)
+	const { state, pathname } = useLocation()
 	const dispatch = useAppDispatch()
 
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
@@ -50,10 +53,10 @@ function UserComponent() {
 		setAnchorElUser(null)
 	}
 
-	if (isAuth) {
+	if (isAuth && loggedUser) {
 		return (
 			<Box sx={{ flexGrow: 0 }}>
-				<Tooltip title="Open settings">
+				<Tooltip title={t('open-settings')}>
 					<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
 						<Avatar alt="Remy Sharp" src="/images/avatar/2.jpg" />
 					</IconButton>
@@ -121,7 +124,7 @@ function UserComponent() {
 						<ListItemIcon>
 							<LogoutIcon fontSize="small" />
 						</ListItemIcon>
-						<ListItemText>Logout</ListItemText>
+						<ListItemText>{t('logout')}</ListItemText>
 					</MenuItem>
 				</Menu>
 			</Box>
@@ -129,8 +132,13 @@ function UserComponent() {
 	} else {
 		return (
 			<Box sx={{ flexGrow: 0 }}>
-				<Tooltip title="SignIn">
-					<IconButton sx={{ p: 0 }} to="/signin" component={LinkRRD}>
+				<Tooltip title={t('sign-in')}>
+					<IconButton
+						sx={{ p: 0 }}
+						to="/signin"
+						state={{ from: pathname }}
+						component={LinkRRD}
+					>
 						<Avatar>
 							<LoginIcon />
 						</Avatar>

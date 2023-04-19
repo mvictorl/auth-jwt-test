@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 
 type AddTestDialogProps = {
 	open: boolean
+	titleError?: string
 	onOkDialog: (e: {
 		title: string
 		description: string
@@ -25,6 +26,7 @@ const AddTestDialog = ({
 	open,
 	onOkDialog,
 	onCancelDialog,
+	titleError = '',
 }: AddTestDialogProps) => {
 	const { t } = useTranslation()
 	const [title, setTitle] = useState<string>('')
@@ -68,26 +70,29 @@ const AddTestDialog = ({
 					mb: 2,
 				}}
 			>
-				{t('Add new test')}
+				{t('add-new-test')}
 			</DialogTitle>
 			<DialogContent>
 				<TextField
 					autoFocus
+					required
 					id="new-title"
 					type="text"
 					value={title}
 					onChange={e => setTitle(e.target.value)}
-					label="Title"
+					label={t('title')}
 					variant="outlined"
 					margin="dense"
 					fullWidth
+					error={titleError !== ''}
+					helperText={titleError || ' '}
 				/>
 				<TextField
 					id="new-description"
 					type="text"
 					value={description}
 					onChange={e => setDescription(e.target.value)}
-					label="Description"
+					label={t('descriptio')}
 					variant="outlined"
 					margin="dense"
 					fullWidth
@@ -101,11 +106,11 @@ const AddTestDialog = ({
 							color="primary"
 						/>
 					}
-					label="Multi-answer"
+					label={t('multi-answer')}
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleCancel}>Cancel</Button>
+				<Button onClick={handleCancel}>{t('cancel')}</Button>
 				<Button type="submit" onClick={handleCreateOk}>
 					Ok
 				</Button>

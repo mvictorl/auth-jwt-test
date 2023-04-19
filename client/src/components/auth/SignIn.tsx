@@ -68,7 +68,7 @@ const SignIn = () => {
 
 	useEffect(() => {
 		if (isSuccess && isAuth) {
-			enqueueSnackbar(t('auth.successful'), {
+			enqueueSnackbar(t('successful'), {
 				variant: 'success',
 			})
 			dispatch(clearSuccess())
@@ -113,7 +113,7 @@ const SignIn = () => {
 							<LockOpenIcon fontSize="large" />
 						</Avatar>
 						<Typography variant="h3" sx={{ my: 2 }}>
-							{t('auth.sign-in')}
+							{t('sign-in')}
 						</Typography>
 					</Box>
 
@@ -123,7 +123,7 @@ const SignIn = () => {
 						onChange={e => setNickname(e.target.value)}
 						onFocus={() => setNicknameError(' ')}
 						name="nickname"
-						label={t('auth.nick-name')}
+						label={t('nick-name')}
 						fullWidth
 						margin="dense"
 						autoComplete="nickame"
@@ -137,7 +137,7 @@ const SignIn = () => {
 						onChange={e => setPassword(e.target.value)}
 						onFocus={() => setPasswordError(' ')}
 						name="password"
-						label={t('auth.password')}
+						label={t('password')}
 						type={showPassword ? 'text' : 'password'}
 						fullWidth
 						margin="dense"
@@ -166,7 +166,7 @@ const SignIn = () => {
 					sx={{ mb: 2 }}
 				>
 					<FormControlLabel
-						label={t('auth.remember')}
+						label={t('remember')}
 						control={
 							<Checkbox
 								name="remember"
@@ -185,7 +185,7 @@ const SignIn = () => {
 					loading={isLoading}
 					// sx={{ bgcolor: 'success.main' }}
 				>
-					{t('auth.login')}
+					{t('login')}
 				</LoadingButton>
 			</Box>
 			<Grid container sx={{ mt: 2 }}>
@@ -197,7 +197,7 @@ const SignIn = () => {
 						variant="subtitle2"
 						underline="hover"
 					>
-						{t('auth.forgot-pass')}
+						{t('forgot-pass')}
 					</Link>
 				</Grid>
 				<Grid item>
@@ -208,7 +208,7 @@ const SignIn = () => {
 						variant="subtitle2"
 						underline="hover"
 					>
-						{t('auth.dont-have-account')}
+						{t('dont-have-account')}
 					</Link>
 				</Grid>
 			</Grid>

@@ -16,7 +16,7 @@ function Logo() {
 				sx={{ height: 48, mr: 2 }}
 			/>
 
-			<Stack alignItems="center">
+			<Stack alignItems="baseline">
 				<Typography
 					variant="body1"
 					fontSize={14}
@@ -24,7 +24,7 @@ function Logo() {
 					sx={{
 						display: { xs: 'none', md: 'flex' },
 						fontWeight: 700,
-						letterSpacing: '.2rem',
+						letterSpacing: '.1rem',
 						color: 'white',
 						textDecoration: 'none',
 					}}
@@ -33,7 +33,7 @@ function Logo() {
 				</Typography>
 				<Typography
 					variant="body2"
-					fontSize={12}
+					fontSize={11}
 					noWrap
 					sx={{
 						display: { xs: 'none', md: 'flex' },

@@ -11,10 +11,12 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { AuthService } from '../../store/services/auth-service'
+import { useTranslation } from 'react-i18next'
 
 const theme = createTheme()
 
 function RestorePassword() {
+	const { t } = useTranslation()
 	const navigate = useNavigate()
 
 	const goBack = (e: any) => {
@@ -62,7 +64,7 @@ function RestorePassword() {
 						<LockOutlinedIcon />
 					</Avatar>
 					<Typography component="h1" variant="h5">
-						Restore Password
+						{t('restore-pass')}
 					</Typography>
 					<Box
 						component="form"
@@ -75,7 +77,7 @@ function RestorePassword() {
 							required
 							fullWidth
 							id="email"
-							label="Email Address"
+							label={t('email')}
 							name="email"
 							autoComplete="email"
 							autoFocus
@@ -85,7 +87,7 @@ function RestorePassword() {
 							required
 							fullWidth
 							name="password"
-							label="Password"
+							label={t('password')}
 							type="password"
 							id="password"
 							autoComplete="current-password"
@@ -95,7 +97,7 @@ function RestorePassword() {
 							required
 							fullWidth
 							name="passwordConfirm"
-							label="Confirm Password"
+							label={t('confirm-pass')}
 							type="password"
 							id="passwordConfirm"
 							autoComplete="new-password"
@@ -106,12 +108,12 @@ function RestorePassword() {
 							variant="contained"
 							sx={{ mt: 3, mb: 2 }}
 						>
-							Sign In
+							{t('send')}
 						</Button>
 						<Grid container>
 							<Grid item xs>
 								<Link onClick={goBack} variant="body2" component="button">
-									Back
+									{t('back')}
 								</Link>
 							</Grid>
 						</Grid>

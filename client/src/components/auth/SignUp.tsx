@@ -25,6 +25,7 @@ import {
 } from '../../store/hooks'
 import { clearError } from '../../store/slices/auth-slice'
 import { register } from '../../store/thunks/auth-thunk'
+import { useTranslation } from 'react-i18next'
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,8 @@ const SignUp = () => {
 	const isAuth = useAppSelector(selectAuthIsAuth)
 	const isLoading = useAppSelector(selectAuthLoading)
 	const errors = useAppSelector(selectAuthErrors)
+
+	const { t } = useTranslation()
 
 	const { state, pathname } = useLocation()
 	const navigate = useNavigate()
@@ -120,7 +123,7 @@ const SignUp = () => {
 							<PersonAddIcon fontSize="large" />
 						</Avatar>
 						<Typography variant="h3" sx={{ my: 2 }}>
-							Sign Up
+							{t('sign-up')}
 						</Typography>
 					</Box>
 					<Stack
@@ -133,7 +136,7 @@ const SignUp = () => {
 							onChange={e => setfirstName(e.target.value)}
 							onFocus={() => setFirstNameError(' ')}
 							name="firstName"
-							label="First name"
+							label={t('first-name')}
 							fullWidth
 							margin="dense"
 							autoComplete="firstName"
@@ -145,7 +148,7 @@ const SignUp = () => {
 							onChange={e => setlastName(e.target.value)}
 							onFocus={() => setLastNameError(' ')}
 							name="lastName"
-							label="Last name"
+							label={t('last-name')}
 							fullWidth
 							margin="dense"
 							autoComplete="lastName"
@@ -160,7 +163,7 @@ const SignUp = () => {
 						onChange={e => setNickname(e.target.value)}
 						onFocus={() => setNicknameError(' ')}
 						name="nickname"
-						label="Nick name"
+						label={t('nick-name')}
 						fullWidth
 						margin="dense"
 						autoComplete="username"
@@ -174,7 +177,7 @@ const SignUp = () => {
 						onChange={e => setEmail(e.target.value)}
 						onFocus={() => setEmailError(' ')}
 						name="email"
-						label="Email"
+						label={t('email')}
 						fullWidth
 						margin="dense"
 						autoComplete="email"
@@ -188,7 +191,7 @@ const SignUp = () => {
 						onChange={e => setPassword(e.target.value)}
 						onFocus={() => setPasswordError(' ')}
 						name="password"
-						label="Password"
+						label={t('password')}
 						type="password"
 						fullWidth
 						margin="dense"
@@ -203,7 +206,7 @@ const SignUp = () => {
 						onChange={e => setPasswordConfirm(e.target.value)}
 						onFocus={() => setPasswordConfirmError(' ')}
 						name="passwordConfirm"
-						label="Confirm password"
+						label={t('confirm-pass')}
 						type="password"
 						fullWidth
 						margin="dense"
@@ -221,7 +224,7 @@ const SignUp = () => {
 					loading={isLoading}
 					// sx={{ bgcolor: 'secondary.light' }}
 				>
-					Login
+					{t('register')}{' '}
 				</LoadingButton>
 			</Box>
 			<Grid container sx={{ mt: 2 }}>
@@ -234,7 +237,7 @@ const SignUp = () => {
 						variant="subtitle2"
 						underline="hover"
 					>
-						{'Do you already have an account? Sign In'}
+						{t('do-you-already')}
 					</Link>
 				</Grid>
 			</Grid>

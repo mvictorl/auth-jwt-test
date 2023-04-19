@@ -6,7 +6,7 @@ import { check, login, logout, register, restore } from '../thunks/auth-thunk'
 // Initial Auth State
 const initialState = {
 	isAuth: false,
-	currentUser: {} as IUser,
+	currentUser: null as IUser | null,
 	loading: false,
 	errors: [] as IValidationErrorResponse[],
 	success: false,
@@ -44,7 +44,7 @@ const authSlice = createSlice({
 			state.errors = action.payload as IValidationErrorResponse[]
 			state.isAuth = false
 			state.success = false
-			state.currentUser = {} as IUser
+			state.currentUser = null
 		})
 
 		// === Login ====
@@ -81,13 +81,13 @@ const authSlice = createSlice({
 			state.success = true
 			state.errors = [] as IValidationErrorResponse[]
 			state.isAuth = false
-			state.currentUser = {} as IUser
+			state.currentUser = null
 		})
 		builder.addCase(logout.rejected, state => {
 			console.log('Logout Rejected')
 			state.loading = false
 			state.errors = [] as IValidationErrorResponse[]
-			state.currentUser = {} as IUser
+			state.currentUser = null
 			state.isAuth = false
 		})
 		// === Check ====
@@ -106,7 +106,7 @@ const authSlice = createSlice({
 		builder.addCase(check.rejected, (state, action) => {
 			console.log('Check Rejected', state.errors)
 			state.isAuth = false
-			state.currentUser = {} as IUser
+			state.currentUser = null
 			state.errors = action.payload as IValidationErrorResponse[]
 			state.loading = false
 		})

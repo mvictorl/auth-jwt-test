@@ -27,7 +27,9 @@ i18n
 		interpolation: {
 			escapeValue: false, // react already safes from xss
 		},
-		react: { useSuspense: false },
+		react: {
+			useSuspense: true,
+		},
 	})
 
 export default i18n

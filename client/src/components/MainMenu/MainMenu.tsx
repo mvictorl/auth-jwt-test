@@ -34,7 +34,7 @@ function MainMenu() {
 
 	return (
 		<AppBar position="static">
-			<Container maxWidth={false}>
+			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
@@ -67,18 +67,14 @@ function MainMenu() {
 							}}
 						>
 							<MenuItem onClick={handleCloseNavMenu} component={LinkRRD} to="/">
-								<Typography textAlign="center">
-									{t('main-menu.home')}
-								</Typography>
+								<Typography textAlign="center">{t('home')}</Typography>
 							</MenuItem>
 							<MenuItem
 								onClick={handleCloseNavMenu}
 								component={LinkRRD}
 								to="/tester"
 							>
-								<Typography textAlign="center">
-									{t('main-menu.tester')}
-								</Typography>
+								<Typography textAlign="center">{t('tester')}</Typography>
 							</MenuItem>
 							{/* <MenuItem
 								onClick={handleCloseNavMenu}
@@ -104,7 +100,7 @@ function MainMenu() {
 								component={LinkRRD}
 								to="/"
 							>
-								{t('main-menu.home')}
+								{t('home')}
 							</Button>
 							<Button
 								onClick={handleCloseNavMenu}
@@ -112,7 +108,7 @@ function MainMenu() {
 								component={LinkRRD}
 								to="/tester"
 							>
-								{t('main-menu.tester')}
+								{t('tester')}
 							</Button>
 							{/* <Button
 								onClick={handleCloseNavMenu}

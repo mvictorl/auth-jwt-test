@@ -67,6 +67,8 @@ model Exercise {
   isMultiple  Boolean    @default(false)
   author      User       @relation(fields: [userId], references: [id], onDelete: SetDefault)
   userId      String     @default("131e1ed4-e2c3-4f74-91b2-d93dd652ec9c")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   @@schema("tester")
 }

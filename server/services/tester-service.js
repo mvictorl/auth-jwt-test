@@ -15,10 +15,18 @@ class TesterService {
 				where: { id },
 				select: {
 					id: true,
+					createdAt: true,
 					title: true,
 					description: true,
 					isMultiple: true,
-					userId: true,
+					author: {
+						select: {
+							id: true,
+							username: true,
+							firstName: true,
+							lastName: true,
+						},
+					},
 					questions: {
 						select: {
 							id: true,
