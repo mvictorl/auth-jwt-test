@@ -17,6 +17,7 @@ import {
 	Stack,
 	TablePagination,
 } from '@mui/material'
+import { SvgIconComponent } from '@mui/icons-material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck'
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline'
@@ -32,15 +33,18 @@ import {
 } from '../../store/APIs/testerApi'
 import AddTestDialog from './AddTestDialog'
 import { selectAuthCurrentUser, useAppSelector } from '../../store/hooks'
+import TestListContextMenu from './TestListContextMenu'
+
+import ContextMenu, { componentItemType } from './ContextMenu'
 
 function TestList() {
 	const { data } = useGetAllTestsQuery()
+	const currentUser = useAppSelector(selectAuthCurrentUser)
 	const navigate = useNavigate()
 	const { t } = useTranslation()
 
 	const [tests, setTests] = useState<ITestLight[]>([])
 
-	const currentUser = useAppSelector(selectAuthCurrentUser)
 	const [addNewTest, { isSuccess: isAddSuccess, isError: isAddError }] =
 		useAddNewTestMutation()
 
@@ -86,16 +90,19 @@ function TestList() {
 	}
 	// ----------------------------------------------------------------
 
-	const [contextMenu, setContextMenu] = React.useState<{
+	const [contextMenuPos, setContextMenuPos] = useState<{
 		mouseX: number
 		mouseY: number
 	} | null>(null)
 
-	const handleContextMenu = (event: MouseEvent) => {
+	const [currentId, setCurrentId] = useState<string>('')
+
+	const handleContextMenu = (event: MouseEvent, id: string) => {
 		event.preventDefault()
 		event.stopPropagation()
-		setContextMenu(
-			contextMenu === null
+		setCurrentId(id)
+		setContextMenuPos(
+			contextMenuPos === null
 				? {
 						mouseX: event.clientX + 2,
 						mouseY: event.clientY - 6,
@@ -104,21 +111,37 @@ function TestList() {
 		)
 	}
 
-	const handleClose = () => {
-		setContextMenu(null)
+	const handleCloseContextMenu = () => {
+		setContextMenuPos(null)
+		setCurrentId('')
 	}
 
-	const handleEdit = (event: React.MouseEvent, id: string | undefined) => {
-		event.preventDefault()
-		event.stopPropagation()
-		setContextMenu(null)
-		navigate(id ? `edit/${id}` : '/')
-	}
-
-	type labelDisplayedRowsType = { from: number; to: number; count: number }
-	const labelDisplayedRows = ({ from, to, count }: labelDisplayedRowsType) => {
-		return `${from}–${to} / ${count !== -1 ? count : `more than ${to}`}`
-	}
+	// -------------------------------------------
+	const contextMenuItems: componentItemType[] = [
+		{
+			Icon: <PlayCircleOutlineIcon />,
+			name: t('run'),
+			action: (id: string) => {
+				console.log('ID Run:', id)
+			},
+		},
+		{
+			Icon: <EditNoteIcon />,
+			name: t('edit'),
+			action: (id: string) => {
+				console.log('ID Edit:', id)
+			},
+			divider: true,
+		},
+		{
+			Icon: <DeleteIcon />,
+			name: t('delete'),
+			action: (id: string) => {
+				console.log('ID Delete:', id)
+			},
+		},
+	]
+	// -------------------------------------------
 
 	return (
 		<Container maxWidth="md">
@@ -150,10 +173,10 @@ function TestList() {
 							<div key={test.id}>
 								<Link to={`${test.id}`} underline="none" component={LinkRRD}>
 									<ListItem
-										onContextMenu={handleContextMenu}
+										onContextMenu={e => handleContextMenu(e, test.id)}
 										secondaryAction={
 											<IconButton
-												onClick={handleContextMenu}
+												onClick={e => handleContextMenu(e, test.id)}
 												edge="end"
 												aria-label="delete"
 											>
@@ -178,38 +201,20 @@ function TestList() {
 								</Link>
 								<Divider variant="inset" component="li" />
 
-								<Menu
-									open={contextMenu !== null}
-									onClose={handleClose}
-									anchorReference="anchorPosition"
-									anchorPosition={
-										contextMenu !== null
-											? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-											: undefined
+								{/* <TestListContextMenu
+									contextMenu={contextMenuPos}
+									setContextMenu={setContextMenuPos}
+									open={contextMenuPos !== null}
+									id={currentId}
+								/> */}
+								<ContextMenu
+									open={currentId !== ''}
+									contextMenuPos={
+										contextMenuPos ? contextMenuPos : { mouseX: 10, mouseY: 10 }
 									}
-								>
-									<MenuItem onClick={handleClose} sx={{ fontWeight: 'bold' }}>
-										<ListItemIcon>
-											<PlayCircleOutlineIcon fontSize="small" />
-										</ListItemIcon>
-										<ListItemText>
-											<b>{t('run')}</b>
-										</ListItemText>
-									</MenuItem>
-									<MenuItem onClick={e => handleEdit(e, test.id)}>
-										<ListItemIcon>
-											<EditNoteIcon fontSize="small" />
-										</ListItemIcon>
-										<ListItemText>{t('edit')}</ListItemText>
-									</MenuItem>
-									<Divider />
-									<MenuItem onClick={handleClose}>
-										<ListItemIcon>
-											<DeleteIcon fontSize="small" />
-										</ListItemIcon>
-										<ListItemText>{t('delete')}</ListItemText>
-									</MenuItem>
-								</Menu>
+									handleCloseContextMenu={handleCloseContextMenu}
+									items={contextMenuItems}
+								/>
 							</div>
 					  ))
 					: null}
@@ -221,8 +226,6 @@ function TestList() {
 					page={page}
 					onPageChange={handleChangePage}
 					onRowsPerPageChange={handleChangeRowsPerPage}
-					// labelRowsPerPage="Rows/page:"
-					// labelDisplayedRows={labelDisplayedRows}
 				/>
 			</List>
 		</Container>

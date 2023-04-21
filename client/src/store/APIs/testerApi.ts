@@ -11,7 +11,7 @@ import { store } from '..'
 import { logout } from '../thunks/auth-thunk'
 
 export interface ITestLight {
-	id?: string
+	id: string
 	title: string
 	description: string
 	isMultiple: boolean
@@ -94,7 +94,7 @@ export const testerApi = createApi({
 			providesTags: ['Tests'],
 		}),
 
-		addNewTest: builder.mutation<ITestLight, ITestLight>({
+		addNewTest: builder.mutation<ITestLight, Omit<ITestLight, 'id'>>({
 			query: newTest => ({
 				url: 'exercises',
 				method: 'POST',

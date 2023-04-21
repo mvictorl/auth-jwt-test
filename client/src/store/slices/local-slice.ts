@@ -11,7 +11,7 @@ export interface LocaleState {
 }
 
 const initialState: LocaleState = {
-	value: 'enUS',
+	value: 'ruRU',
 }
 
 export const localeSlice = createSlice({
